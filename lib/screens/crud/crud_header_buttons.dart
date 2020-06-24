@@ -1,45 +1,46 @@
 import 'package:flutter/material.dart';
 
-class CrudHeaderButtons extends StatefulWidget {
+class CrudHeaderButtons extends StatelessWidget {
+  static const FORECAST_TEXT = "Previsões";
+  static const CATEGORIES_TEXT = "Categorias";
+
+  final String _selectedTab;
   final Function _navigationHandler;
-  CrudHeaderButtons(this._navigationHandler);
-  @override
-  _CrudHeaderButtonsState createState() {
-    return _CrudHeaderButtonsState();
-  }
-}
 
-class _CrudHeaderButtonsState extends State<CrudHeaderButtons> {
-  final _forecastText = "Previsões";
-  final _wrapperText = "Envelopes";
-  final _categoriesText = "Categorias";
-  String _selectedButtom;
-
-  _CrudHeaderButtonsState(){
-    this._selectedButtom = _forecastText;
-  }
+  CrudHeaderButtons(this._selectedTab, this._navigationHandler);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        NavigationButton(_forecastText, Icons.access_time,
-            _selectedButtom == _forecastText, _handlerClick),
-        NavigationButton(_wrapperText, Icons.mail_outline,
-            _selectedButtom == _wrapperText, _handlerClick),
-        NavigationButton(_categoriesText, Icons.format_list_bulleted,
-            _selectedButtom == _categoriesText, _handlerClick)
-      ],
+    return Container(
+      width: double.maxFinite,
+      height: 133,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF5D57EA), Color(0xFF9647DB)]),
+      ),
+      child: SafeArea(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            NavigationButton(FORECAST_TEXT, Icons.access_time,
+                _selectedTab == FORECAST_TEXT, _handlerClick),
+            SizedBox(
+              width: 20,
+            ),
+
+            NavigationButton(CATEGORIES_TEXT, Icons.format_list_bulleted,
+                _selectedTab == CATEGORIES_TEXT, _handlerClick)
+          ],
+        ),
+      ),
     );
   }
 
   _handlerClick(String selectedText) {
-    setState(() {
-      this._selectedButtom = selectedText;
-      widget._navigationHandler(this._selectedButtom);
-    });
+    _navigationHandler(selectedText);
   }
 }
 
@@ -79,7 +80,7 @@ class NavigationButton extends StatelessWidget {
               iconData,
               size: 22.0,
             ),
-            Padding(padding: EdgeInsets.only(top: 4)),
+            const Padding(padding: EdgeInsets.only(top: 4)),
             Text(this.textData)
           ],
         ),

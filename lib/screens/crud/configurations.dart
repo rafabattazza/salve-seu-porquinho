@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:salveSeuPorquinho/screens/crud/crudHeaderButtons.dart';
+import 'package:salveSeuPorquinho/screens/crud/crud_header_buttons.dart';
+import 'package:salveSeuPorquinho/screens/crud/crud_body.dart';
 
-import 'crudBody.dart';
+class Configurations extends StatefulWidget {
+  @override
+  _ConfigurationsState createState() => _ConfigurationsState();
+}
 
-class Configurations extends StatelessWidget {
-  final _headerText = "Configurar Categorias";
-  final crudBody = CrudBody();
+class _ConfigurationsState extends State<Configurations> {
+  static const HEADER_FORECAST_TEXT = "Configurar Previsões";
+  static const HEADER_CATEGORIES_TEXT = "Configurar Categorias";
+
+  String _headerText = HEADER_FORECAST_TEXT;
+  String _selectedTab = CrudHeaderButtons.FORECAST_TEXT;
 
   @override
   Widget build(BuildContext context) {
@@ -17,30 +24,28 @@ class Configurations extends StatelessWidget {
         elevation: 0,
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            width: double.maxFinite,
-            height: 133,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF5D57EA), Color(0xFF9647DB)]),
-            ),
-            child: SafeArea(
-              child: Column(
-                children: <Widget>[
-                  CrudHeaderButtons((tabName) => this._handleTabSelected(tabName)),
-                ],
-              ),
+          CrudHeaderButtons(_selectedTab, _handleTabSelected),
+          Expanded(
+            child: SingleChildScrollView(
+              child: CrudBody(_selectedTab),
             ),
           ),
-          crudBody
         ],
       ),
     );
   }
-  _handleTabSelected (String tabName) {
-    crudBody.updateTab(tabName);
+
+  _handleTabSelected(String tabName) {
+    setState(() {
+      if (tabName == CrudHeaderButtons.FORECAST_TEXT) {
+        this._headerText = HEADER_FORECAST_TEXT;
+      } else {
+        this._headerText = HEADER_CATEGORIES_TEXT;
+      }
+
+      this._selectedTab = tabName;
+    });
   }
 }

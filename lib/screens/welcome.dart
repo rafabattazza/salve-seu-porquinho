@@ -1,33 +1,35 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salveSeuPorquinho/screens/crud/Configurations.dart';
-import 'package:salveSeuPorquinho/screens/howItWorks.dart';
+import 'package:salveSeuPorquinho/screens/how_it_works.dart';
+import 'package:salveSeuPorquinho/services/database/start_db_dao.dart';
 
 class WelcomeScreen extends StatelessWidget {
+  static const BACKGROUND = AssetImage("assets/images/bg.jpg");
+  static const TITLE_TEXT = "SalveSeuPorquinho";
+  static const DESCRIPTION_TEXT = "Ajudamos você a não quebrar seu cofrinho no final do mês!!!";
+  static const ACCESS_BUTTON_TEXT = "Entrar";
+  static const HOW_WORKS_BUTTON_TEXT = "Ver como funciona";
+
+  static const TITLE_STYLE = TextStyle(
+    color: Color(0xFF804541),
+    fontSize: 32,
+  );
+  static const DESCRIPTION_STYLE = TextStyle(
+    color: Color(0xFF403434),
+    fontSize: 24,
+  );
+  static const ACCESS_BUTTON_STYLE = TextStyle(fontSize: 20);
+  static const HOW_WORKS_BUTTON_STYLE = TextStyle(
+    fontSize: 20,
+    decoration: TextDecoration.underline,
+    color: Color(0xFF804541),
+  );
+
+
   @override
   Widget build(BuildContext context) {
-    final _background = AssetImage("assets/images/bg.jpg");
-
-    final _titleText = "SalveSeuPorquinho";
-    final _descriptionText =
-        "Ajudamos você a não quebrar seu cofrinho no final do mês!!!";
-    final _accessButtonText = "Entrar";
-    final _howWorksButtonText = "Ver como funciona";
-
-    final _titleStyle = TextStyle(
-      color: Color(0xFF804541),
-      fontSize: 32,
-    );
-    final _descriptionStyle = TextStyle(
-      color: Color(0xFF403434),
-      fontSize: 24,
-    );
-    final _accessButtonStyle = TextStyle(fontSize: 20);
-    final _howWorksButtonStyle = TextStyle(
-      fontSize: 20,
-      decoration: TextDecoration.underline,
-      color: Color(0xFF804541),
-    );
+    final paddingTop = MediaQuery.of(context).size.height / 2;
 
     return Scaffold(
       body: Container(
@@ -35,7 +37,7 @@ class WelcomeScreen extends StatelessWidget {
         height: double.maxFinite,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: _background,
+            image: BACKGROUND,
             fit: BoxFit.cover,
           ),
         ),
@@ -46,16 +48,15 @@ class WelcomeScreen extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(32),
                   child: Text(
-                    _titleText,
-                    style: _titleStyle,
+                    TITLE_TEXT,
+                    style: TITLE_STYLE,
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(8, 350, 8, 32),
+                  padding: EdgeInsets.fromLTRB(8, paddingTop, 8, 32),
                   child: Text(
-                    _descriptionText,
-                    textAlign: TextAlign.center,
-                    style: _descriptionStyle,
+                    DESCRIPTION_TEXT, textAlign: TextAlign.center,
+                    style: DESCRIPTION_STYLE,
                   ),
                 ),
                 Container(
@@ -66,8 +67,8 @@ class WelcomeScreen extends StatelessWidget {
                       color: Color(0xAA14B390),
                       onPressed: () => _handleBtnLogInClick(context),
                       child: Text(
-                        _accessButtonText,
-                        style: _accessButtonStyle,
+                        ACCESS_BUTTON_TEXT,
+                        style: ACCESS_BUTTON_STYLE,
                       ),
                     ),
                   ),
@@ -77,8 +78,8 @@ class WelcomeScreen extends StatelessWidget {
                   child: FlatButton(
                     onPressed: () => _handleBtnHowItWorkClick(context),
                     child: Text(
-                      _howWorksButtonText,
-                      style: _howWorksButtonStyle,
+                      HOW_WORKS_BUTTON_TEXT,
+                      style: HOW_WORKS_BUTTON_STYLE,
                     ),
                   ),
                 ),
@@ -90,7 +91,9 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  void _handleBtnLogInClick(BuildContext context) {
+  void _handleBtnLogInClick(BuildContext context) async {
+    await new StartDbDao().startDb();
+    
     Navigator.push(context, MaterialPageRoute(builder: (_) {
       return Configurations();
     }));

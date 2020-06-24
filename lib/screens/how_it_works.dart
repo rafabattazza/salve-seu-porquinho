@@ -3,6 +3,16 @@ import 'package:flutter/material.dart';
 import 'dashboard.dart';
 
 class HowItWorks extends StatelessWidget {
+  static const HOW_WORKS_TEXT = "Como Funciona?";
+  static const DESCRIPTION_TEXT = "O SalveSeuPorquinho utiliza a estratégia dos envelopes pra você economizar seu dinheiro.";
+  
+  static const FIRST_STEP = "1º Informe o quanto você recebe por mês";
+  static const SECOND_STEP = "2º Crie os envelopes com suas previsões de despesas para o mês";
+  static const THIRD_STEP = "3º Lance suas despesas em cada envelope durante o mês até atingir o limite mensal de cada evelope";
+  static const FOURTH_STEP = "4º Ajuste os envelopes para o mês seguinte e assim vá ajustando suas despesas";
+
+  static const LOGIN_BUTTON_TEXT = "Entrar";
+
   final _textStyle = TextStyle(
     fontSize: 18,
     color: Colors.white,
@@ -23,7 +33,7 @@ class HowItWorks extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text("Como Funciona?"),
+          title: Text(HOW_WORKS_TEXT),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -31,7 +41,7 @@ class HowItWorks extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
                 child: Text(
-                  "O SalveSeuPorquinho utiliza a estratégia dos envelopes pra você economizar seu dinheiro.",
+                  DESCRIPTION_TEXT,
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Color(0xFF22222A), fontSize: 24),
                 ),
@@ -49,28 +59,28 @@ class HowItWorks extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(top: 16),
                       child: Text(
-                        "1º Informe o quanto você recebe por mês",
+                        FIRST_STEP,
                         style: _textStyle,
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 24),
                       child: Text(
-                        "2º Crie os envelopes com suas previsões de despesas para o mês",
+                        SECOND_STEP,
                         style: _textStyle,
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 24),
                       child: Text(
-                        "3º Lance suas despesas em cada envelope durante o mês até atingir o limite mensal de cada evelope",
+                        THIRD_STEP,
                         style: _textStyle,
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 24),
                       child: Text(
-                        "4º Ajuste os envelopes para o mês seguinte e assim vá ajustando suas despesas",
+                        FOURTH_STEP,
                         style: _textStyle,
                       ),
                     ),
@@ -79,7 +89,7 @@ class HowItWorks extends StatelessWidget {
                       width: double.maxFinite,
                       child: RaisedButton(
                         color: Colors.black,
-                        child: Text("Entrar"),
+                        child: Text(LOGIN_BUTTON_TEXT),
                         onPressed: () => _handlerBtnLogInClick(context),
                       ),
                     ),
