@@ -31,22 +31,22 @@ abstract class RootDAO {
               "  cat_deleted INTEGER "
               " );");
           await db.execute(
-              " CREATE TABLE Prevision ("
-              "  pre_id INTEGER PRIMARY KEY,"
-              "  pre_mounth INTEGER NOT NULL,"
-              "  pre_year INTEGER NOT NULL,"
-              "  pre_invoice DECIMAL NOT NULL,"
-              "  UNIQUE(pre_mounth, pre_year)"
+              " CREATE TABLE Forecast ("
+              "  for_id INTEGER PRIMARY KEY,"
+              "  for_mounth INTEGER NOT NULL,"
+              "  for_year INTEGER NOT NULL,"
+              "  for_invoice DECIMAL NOT NULL,"
+              "  UNIQUE(for_mounth, for_year)"
               " )");
           await db.execute(              
               " CREATE TABLE Wrapper ("
               "  wra_id INTEGER PRIMARY KEY,"
-              "  wra_prevision INTEGER NOT NULL,"
+              "  wra_forecast INTEGER NOT NULL,"
               "  wra_category INTEGER NOT NULL,"
               "  wra_name TEXT NOT NULL,"
               "  wra_budget NUMBER NOT NULL,"
-              "  UNIQUE(wra_prevision, wra_name),"
-              "  FOREIGN KEY (wra_prevision) REFERENCES Prevision (pre_id),"
+              "  UNIQUE(wra_forecast, wra_name),"
+              "  FOREIGN KEY (wra_forecast) REFERENCES Forecast (for_id),"
               "  FOREIGN KEY (wra_category) REFERENCES Category (cat_id)"
               " );");
         }
@@ -58,7 +58,7 @@ abstract class RootDAO {
           Batch batch = db.batch();
 
           batch.execute("DROP TABLE IF EXISTS Category;");
-          batch.execute("DROP TABLE IF EXISTS Prevision;");
+          batch.execute("DROP TABLE IF EXISTS Forecast;");
           batch.execute("DROP TABLE IF EXISTS Wrapper;");
 
           await batch.commit();

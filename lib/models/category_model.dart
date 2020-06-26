@@ -1,8 +1,12 @@
+import 'package:salveSeuPorquinho/models/wrapper_model.dart';
+
 class CategoryModel {
   int id;
   String name;
   int percent;
   bool deleted;
+
+  List<WrapperModel> groupedWrappers = [];
 
   CategoryModel({this.id, this.name, this.percent, this.deleted});
   CategoryModel.id(this.id);

@@ -89,12 +89,12 @@ packages:
     source: hosted
     version: "2.1.12"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.16.1"
+    version: "0.15.8"
   matcher:
     dependency: transitive
     description:
@@ -109,6 +109,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8"
+  month_picker_strip:
+    dependency: "direct main"
+    description:
+      name: month_picker_strip
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   path:
     dependency: transitive
     description:

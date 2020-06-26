@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:salveSeuPorquinho/screens/crud/crud_header_buttons.dart';
 import 'form_category.dart';
-import 'form_prevision.dart';
+import 'form_forecast.dart';
 
 class CrudBody extends StatelessWidget {
   final String _selectedTab;
@@ -17,7 +17,7 @@ class CrudBody extends StatelessWidget {
 
   Widget _createForm() {
     if (this._selectedTab == CrudHeaderButtons.FORECAST_TEXT) {
-      return FormPrevision();
+      return FormForecast();
     } else {
       return FormCategories();
     }

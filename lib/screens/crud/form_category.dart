@@ -146,8 +146,7 @@ class _FormCategoriesState extends State<FormCategories> {
                   TextFormField(
                     keyboardType: TextInputType.number,
                     controller: _percentController,
-                    decoration: ThemeUtils.inputDecoration
-                        .copyWith(labelText: _PERCENT_TEXT),
+                    decoration: ThemeUtils.inputDecoration.copyWith(labelText: _PERCENT_TEXT),
                     validator: REQUIRED,
                     inputFormatters: <TextInputFormatter>[
                       WhitelistingTextInputFormatter.digitsOnly

@@ -11,6 +11,10 @@ class ThemeUtils {
     fontWeight: FontWeight.w300,
   );
 
+  static const TextStyle strongText = TextStyle(
+    fontWeight: FontWeight.w500,
+  );
+
   static final InputDecoration inputDecoration = InputDecoration(
     filled: true,
     contentPadding: new EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 10.0),
