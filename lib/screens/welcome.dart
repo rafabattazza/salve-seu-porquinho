@@ -7,7 +7,8 @@ import 'package:salveSeuPorquinho/services/database/start_db_dao.dart';
 class WelcomeScreen extends StatelessWidget {
   static const BACKGROUND = AssetImage("assets/images/bg.jpg");
   static const TITLE_TEXT = "SalveSeuPorquinho";
-  static const DESCRIPTION_TEXT = "Ajudamos você a não quebrar seu cofrinho no final do mês!!!";
+  static const DESCRIPTION_TEXT =
+      "Ajudamos você a não quebrar seu cofrinho no final do mês!!!";
   static const ACCESS_BUTTON_TEXT = "Entrar";
   static const HOW_WORKS_BUTTON_TEXT = "Ver como funciona";
 
@@ -25,7 +26,6 @@ class WelcomeScreen extends StatelessWidget {
     decoration: TextDecoration.underline,
     color: Color(0xFF804541),
   );
-
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,8 @@ class WelcomeScreen extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.fromLTRB(8, paddingTop, 8, 32),
                   child: Text(
-                    DESCRIPTION_TEXT, textAlign: TextAlign.center,
+                    DESCRIPTION_TEXT,
+                    textAlign: TextAlign.center,
                     style: DESCRIPTION_STYLE,
                   ),
                 ),
@@ -93,7 +94,7 @@ class WelcomeScreen extends StatelessWidget {
 
   void _handleBtnLogInClick(BuildContext context) async {
     await new StartDbDao().startDb();
-    
+
     Navigator.push(context, MaterialPageRoute(builder: (_) {
       return Configurations();
     }));

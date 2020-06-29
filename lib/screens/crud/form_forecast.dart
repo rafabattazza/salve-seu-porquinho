@@ -105,46 +105,6 @@ class _FormForecastState extends State<FormForecast> {
     return mounthPicker;
   }
 
-  _onTxtInvoiceSaved(String value) async {
-    setState(() {
-      this._forecast.invoice =
-          double.parse(value == null || value.length == 0 ? "0" : value);
-    });
-    _forecastDao.persist(this._forecast);
-  }
-
-  _loadOrCreatePrevision(DateTime date) async {
-    final ForecastDAO _forecastDao = ForecastDAO();
-    final WrapperDAO _wrapperDao = WrapperDAO();
-
-    ForecastModel _forecast =
-        await _forecastDao.findByMounthAndYear(date.month, date.year);
-    if (_forecast == null) {
-      _forecast = await _forecastDao.findLast();
-      if (_forecast != null) {
-        //Creating from the last forecast
-        _forecast.id = null;
-        _forecast.mounth = date.month;
-        _forecast.year = date.year;
-        await _forecastDao.persist(_forecast);
-      }
-    }
-
-    if (_forecast == null) {
-      await new StartDbDao().createDefaultPrevision();
-      _forecast = await _forecastDao.findByMounthAndYear(date.month, date.year);
-    }
-
-    List<CategoryModel> _categories =
-        await _wrapperDao.findByForecastGroupedByCategory(_forecast.id);
-
-    setState(() {
-      this._invoiceController.text = _format.format(_forecast.invoice);
-      this._forecast = _forecast;
-      this._categories = _categories;
-    });
-  }
-
   Widget _builderCategoryRow(CategoryModel category, int i) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -165,18 +125,11 @@ class _FormForecastState extends State<FormForecast> {
                   child: Text("${category.name} (${category.percent}%)"),
                   width: MediaQuery.of(context).size.width - 200,
                 ),
-                InkWell(
-                  child: Icon(
-                    Icons.add,
-                    size: 32,
-                  ),
-                  onTap: () {
-                    _editWrapper(null, category);
-                  },
-                ),
               ],
             ),
-            Divider(color: Colors.white24,),
+            Divider(
+              color: Colors.white24,
+            ),
             if (category.groupedWrappers.length == 0)
               Center(
                 child: Padding(
@@ -192,23 +145,12 @@ class _FormForecastState extends State<FormForecast> {
               ...new ObjectArray<WrapperModel>(
                 category.groupedWrappers,
                 (wrapper, wrIndex) {
-                  final TextEditingController control = TextEditingController(
-                      text: _format.format(wrapper.budget));
-                  return Container(
-                    padding: EdgeInsets.only(top: 8),
-                    child: TextFormField(
-                      controller: control,
-                      decoration: InputDecoration(
-                        labelText: wrapper.name,
-                        prefixIcon: Icon(Icons.attach_money),
-                      ),
-                      readOnly: true,
-                      onTap: () => _editWrapper(wrapper, wrapper.category),
-                    ),
-                  );
+                  return WapperRow(wrapper, _editWrapper);
                 },
               ).getObjects(),
-            Divider(color: Colors.white24,),
+            Divider(
+              color: Colors.white24,
+            ),
             Padding(
               padding: EdgeInsets.only(top: 16.0),
               child: Column(
@@ -278,6 +220,8 @@ class _FormForecastState extends State<FormForecast> {
         text: wrapper == null ? null : _format.format(wrapper?.budget));
     final _formKey = GlobalKey<FormState>();
 
+    const String _BUTTON_DELETE_TEXT = "Excluir";
+
     _onBtnSalvarClick() async {
       if (!_formKey.currentState.validate()) return;
 
@@ -288,11 +232,7 @@ class _FormForecastState extends State<FormForecast> {
       wr.budget = double.parse(_budgetController.text);
 
       await wrapperDao.persist(wr);
-      List<CategoryModel> categories =
-          await wrapperDao.findByForecastGroupedByCategory(_forecast.id);
-      setState(() {
-        this._categories = categories;
-      });
+      this.refresh();
       Navigator.of(context).pop();
     }
 
@@ -300,9 +240,20 @@ class _FormForecastState extends State<FormForecast> {
         context: context,
         builder: (ctx) {
           return AlertDialog(
-            title: Text(wrapper == null
-                ? _NEW_WRAPPER_TEXT
-                : _EDIT_WRAPPER_TEXT.replaceAll("{}", wrapper.name)),
+            title: Column(
+              children: <Widget>[
+                Text(wrapper == null
+                    ? _NEW_WRAPPER_TEXT
+                    : _EDIT_WRAPPER_TEXT.replaceAll("{}", wrapper.name)),
+                if (wrapper != null)
+                  RaisedButton.icon(
+                    onPressed: () => _deleteWrapper(wrapper),
+                    color: Colors.orange,
+                    icon: Icon(Icons.delete),
+                    label: Text(_BUTTON_DELETE_TEXT),
+                  ),
+              ],
+            ),
             content: Form(
               key: _formKey,
               child: Wrap(
@@ -346,11 +297,125 @@ class _FormForecastState extends State<FormForecast> {
         });
   }
 
+  _onTxtInvoiceSaved(String value) async {
+    setState(() {
+      this._forecast.invoice =
+          double.parse(value == null || value.length == 0 ? "0" : value);
+    });
+    _forecastDao.persist(this._forecast);
+  }
+
+  _loadOrCreatePrevision(DateTime date) async {
+    final ForecastDAO _forecastDao = ForecastDAO();
+    final WrapperDAO _wrapperDao = WrapperDAO();
+
+    ForecastModel _forecast =
+        await _forecastDao.findByMounthAndYear(date.month, date.year);
+    if (_forecast == null) {
+      _forecast = await _forecastDao.findLast();
+      if (_forecast != null) {
+        //Creating from the last forecast
+        _forecast.id = null;
+        _forecast.mounth = date.month;
+        _forecast.year = date.year;
+        await _forecastDao.persist(_forecast);
+      }
+    }
+
+    if (_forecast == null) {
+      await new StartDbDao().createDefaultPrevision();
+      _forecast = await _forecastDao.findByMounthAndYear(date.month, date.year);
+    }
+
+    List<CategoryModel> _categories =
+        await _wrapperDao.findByForecastGroupedByCategory(_forecast.id);
+
+    setState(() {
+      this._invoiceController.text = _format.format(_forecast.invoice);
+      this._forecast = _forecast;
+      this._categories = _categories;
+    });
+  }
+
+  Future<void> refresh() async {
+    final WrapperDAO wrapperDao = WrapperDAO();
+    List<CategoryModel> categories =
+        await wrapperDao.findByForecastGroupedByCategory(_forecast.id);
+    setState(() {
+      this._categories = categories;
+    });
+  }
+
+  _deleteWrapper(WrapperModel wrapper) async {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text("Confirma a exclusão do envelope '${wrapper.name}'?"),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () async {
+              WrapperDAO _wrapperDao = WrapperDAO();
+              await _wrapperDao.delete(wrapper);
+              await this.refresh();
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+            child: Text("Excluir"),
+          ),
+          FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("Cancelar"),
+          ),
+        ],
+      ),
+    );
+  }
+
   double _sumWrappers(CategoryModel category) {
     if (category.groupedWrappers.length == 0) return 0.0;
     double soma = category.groupedWrappers
         .map((w) => w.budget)
         .reduce((value, element) => value += element);
     return soma;
+  }
+}
+
+class WapperRow extends StatefulWidget {
+  final WrapperModel wrapper;
+
+  final Function(
+    WrapperModel wrapperModel,
+    CategoryModel categoryModel,
+  ) onEdit;
+
+  WapperRow(this.wrapper, this.onEdit);
+
+  @override
+  _WapperRowState createState() => _WapperRowState();
+}
+
+class _WapperRowState extends State<WapperRow> {
+  bool deletedSelected = false;
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController control =
+        TextEditingController(text: _format.format(widget.wrapper.budget));
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: TextFormField(
+            controller: control,
+            decoration: InputDecoration(
+              labelText: widget.wrapper.name,
+              prefixIcon: Icon(Icons.attach_money),
+            ),
+            readOnly: true,
+            onTap: () => widget.onEdit(widget.wrapper, widget.wrapper.category),
+          ),
+        ),
+      ],
+    );
   }
 }

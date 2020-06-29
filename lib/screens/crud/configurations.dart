@@ -8,10 +8,10 @@ class Configurations extends StatefulWidget {
 }
 
 class _ConfigurationsState extends State<Configurations> {
-  static const HEADER_FORECAST_TEXT = "Configurar Previsões";
-  static const HEADER_CATEGORIES_TEXT = "Configurar Categorias";
+  static const _HEADER_FORECAST_TEXT = "Configurar Previsões";
+  static const _HEADER_CATEGORIES_TEXT = "Configurar Categorias";
 
-  String _headerText = HEADER_FORECAST_TEXT;
+  String _headerText = _HEADER_FORECAST_TEXT;
   String _selectedTab = CrudHeaderButtons.FORECAST_TEXT;
 
   @override
@@ -40,9 +40,9 @@ class _ConfigurationsState extends State<Configurations> {
   _handleTabSelected(String tabName) {
     setState(() {
       if (tabName == CrudHeaderButtons.FORECAST_TEXT) {
-        this._headerText = HEADER_FORECAST_TEXT;
+        this._headerText = _HEADER_FORECAST_TEXT;
       } else {
-        this._headerText = HEADER_CATEGORIES_TEXT;
+        this._headerText = _HEADER_CATEGORIES_TEXT;
       }
 
       this._selectedTab = tabName;
