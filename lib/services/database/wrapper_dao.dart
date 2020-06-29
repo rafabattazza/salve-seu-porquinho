@@ -6,39 +6,43 @@ class WrapperDAO extends RootDAO {
   Future<List<CategoryModel>> findByForecastGroupedByCategory(final int forecastId) async {
     final db = await database;
 
-    List<Map<String, dynamic>> res =
-        await db.rawQuery(
+    List<Map<String, dynamic>> resCategory = await db.rawQuery(
+      " SELECT *"
+      " FROM Category "
+      " WHERE cat_deleted = 0"
+      " ORDER BY cat_percent DESC, cat_name");
+
+    if(resCategory.isEmpty)return [];
+    
+    List<CategoryModel> result = [];
+    for (Map<String, dynamic> mapCategory in resCategory) {
+      CategoryModel category = CategoryModel.fromMap(mapCategory);
+
+      List<Map<String, dynamic>> resWrapper = await db.rawQuery(
           " SELECT *"
           " FROM Wrapper"
-          " INNER JOIN Category ON cat_id = wra_category"
-          " WHERE wra_forecast = ?"
-          " ORDER BY cat_percent DESC, cat_name, wra_name",
-          [forecastId]
+          " WHERE wra_forecast = ? AND wra_category = ?"
+          " ORDER BY wra_name",
+          [forecastId, category.id]
         );
 
-    if(res.isEmpty)return [];
-
-    CategoryModel lastCategory = CategoryModel.fromMap(res[0]);
-    List<CategoryModel> result = [lastCategory];
-    for(Map<String, dynamic> row in res){
-      CategoryModel category = CategoryModel.fromMap(row);
-      if(category.id != lastCategory.id) {
-        lastCategory = category;
-        result.add(lastCategory);
+      for(Map<String, dynamic> row in resWrapper){
+        WrapperModel wrapper = WrapperModel.fromMap(row);
+        wrapper.category = category;
+        category.groupedWrappers.add(wrapper);
       }
-      lastCategory.groupedWrappers.add(WrapperModel.fromMap(row));
+      result.add(category);
     }
 
-    print(result);
     return result;
   }
 
   persist(WrapperModel wrapper) async {
     final db = await database;
     if (wrapper.id != null) {
-      await db.update("Wrappers", wrapper.toMap(), where: "wra_id = ?", whereArgs: [wrapper.id]);
+      await db.update("Wrapper", wrapper.toMap(), where: "wra_id = ?", whereArgs: [wrapper.id]);
     } else {
-      int insertedId = await db.insert("Wrappers", wrapper.toMap());
+      int insertedId = await db.insert("Wrapper", wrapper.toMap());
       wrapper.id = insertedId;
     }
   }

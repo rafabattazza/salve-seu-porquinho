@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 class DecimalTextInputFormatter extends TextInputFormatter {
   DecimalTextInputFormatter(
-      {int decimalRange, bool activatedNegativeValues = false})
+      {int decimalRange = 2, bool activatedNegativeValues = false})
       : assert(decimalRange == null || decimalRange >= 0, 'DecimalTextInputFormatter declaretion error') {
     String dp = (decimalRange != null && decimalRange > 0)
         ? "([.][0-9]{0,$decimalRange}){0,1}"

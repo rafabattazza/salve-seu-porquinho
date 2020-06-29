@@ -15,6 +15,13 @@ class ThemeUtils {
     fontWeight: FontWeight.w500,
   );
 
+  static const TextStyle bigText = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 22,
+    color: Colors.white54
+  );
+
+
   static final InputDecoration inputDecoration = InputDecoration(
     filled: true,
     contentPadding: new EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 10.0),
