@@ -70,9 +70,9 @@ class _FormForecastState extends State<FormForecast> {
           padding: const EdgeInsets.fromLTRB(16.0, 24.0, 0, 8.0),
           child: Text("Envelopes de despesas - Informe suas previsões"),
         ),
-        if (this._forecast.categories.length == 0)
+        if ((this._forecast?.categories ?? []).length == 0)
           Text("Você não possui nenhuma categoria cadastrada"),
-        if (this._forecast.categories.length != 0)
+        if ((this._forecast?.categories ?? []).length != 0)
           ...new ObjectArray<CategoryModel>(
             this._forecast.categories,
             _builderCategoryRow,

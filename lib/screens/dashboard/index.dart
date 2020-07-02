@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salveSeuPorquinho/models/forecast_model.dart';
+import 'package:salveSeuPorquinho/screens/dashboard/tabs_button.dart';
 import 'package:salveSeuPorquinho/services/business/forecast_business.dart';
 import 'package:salveSeuPorquinho/services/database/forecast_dao.dart';
 import 'header.dart';
@@ -15,42 +16,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   ForecastModel _forecast;
   double spentValues = 0;
+  int selectedTab = 0;
   DateTime date = DateTime.now();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadData(date);
+      _loadDate(date);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.maxFinite,
-        height: 225,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF5D57EA), Color(0xFF9647DB)]),
-        ),
-        child: SafeArea(
-          child: Header(
-            (_forecast?.invoice ?? 0) - (_forecast?.totalSpent() ?? 0),
-            date,
-            (DateTime d) {
-              _loadData(d);
-            },
-          ),
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Header(
+              (_forecast?.invoice ?? 0) - (_forecast?.totalSpent() ?? 0),
+              date,
+              (DateTime d) {
+                _loadDate(d);
+              },
+            ),
+            TabsButton(selectedTab, (tab) {
+              setState(() {
+                this.selectedTab = tab;
+              });
+            }),
+          ],
         ),
       ),
     );
   }
 
-  void _loadData(DateTime date) async {
+  void _loadDate(DateTime date) async {
     var forecast = await ForecastBusiness.loadOrCreateForecast(context, date);
     forecast = await forecastDao.findWithTransactionsValue(forecast.id);
 
