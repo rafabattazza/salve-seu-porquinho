@@ -22,15 +22,20 @@ class ForecastModel {
 
   List<CategoryModel> categories;
 
-  double totalSpent() {
+  double sumCategoriesSpent() {
     if (categories == null) return 0;
-    double total = 0.0;
-    categories.forEach((category) {
-      (category.groupedWrappers ?? []).forEach((wrapper) {
-        total += wrapper.sumTransactions ?? 0;
-      });
-    });
-    return total;
+
+    return categories
+        .map((e) => e.sumWrappersSpent())
+        .reduce((value, element) => value + element);
+
+    // double total = 0.0;
+    // categories.forEach((category) {
+    //   (category.groupedWrappers ?? []).forEach((wrapper) {
+    //     total += wrapper.sumTransactions ?? 0;
+    //   });
+    // });
+    // return total;
   }
 
   factory ForecastModel.fromMap(Map<String, dynamic> json) =>

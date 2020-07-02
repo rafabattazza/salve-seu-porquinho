@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:salveSeuPorquinho/components/object_array.dart';
+import 'package:salveSeuPorquinho/models/category_model.dart';
 import 'package:salveSeuPorquinho/models/forecast_model.dart';
+import 'package:salveSeuPorquinho/models/wrapper_model.dart';
+import 'package:salveSeuPorquinho/screens/dashboard/dashboard_item.dart';
 import 'package:salveSeuPorquinho/screens/dashboard/tabs_button.dart';
 import 'package:salveSeuPorquinho/services/business/forecast_business.dart';
 import 'package:salveSeuPorquinho/services/database/forecast_dao.dart';
@@ -33,18 +37,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            Header(
-              (_forecast?.invoice ?? 0) - (_forecast?.totalSpent() ?? 0),
-              date,
-              (DateTime d) {
-                _loadDate(d);
-              },
+            Container(
+              height: 230,
+              child: Stack(
+                alignment: AlignmentDirectional.bottomCenter,
+                children: <Widget>[
+                  Header(
+                    (_forecast?.invoice ?? 0) -
+                        (_forecast?.sumCategoriesSpent() ?? 0),
+                    date,
+                    (DateTime d) {
+                      _loadDate(d);
+                    },
+                  ),
+                  TabsButton(selectedTab, (tab) {
+                    setState(() {
+                      this.selectedTab = tab;
+                    });
+                  }),
+                ],
+              ),
             ),
-            TabsButton(selectedTab, (tab) {
-              setState(() {
-                this.selectedTab = tab;
-              });
-            }),
+            Padding(padding: EdgeInsets.only(top: 16)),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _buildList(),
+                    )),
+              ),
+            ),
           ],
         ),
       ),
@@ -59,5 +83,60 @@ class _DashboardScreenState extends State<DashboardScreen> {
       this.date = date;
       this._forecast = forecast;
     });
+  }
+
+  List<Widget> _buildList() {
+    if (selectedTab == 0) {
+      return ObjectArray<CategoryModel>(
+              (_forecast?.categories ?? []), _buildCategory)
+          .getObjects();
+    } else {
+      return ObjectArray<CategoryModel>(
+              (_forecast?.categories ?? []), _buildGroupByCategory)
+          .getObjects();
+    }
+  }
+
+  Widget _buildCategory(CategoryModel category, int index) {
+    print(category.groupedWrappers);
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(category.name),
+          ),
+          ...ObjectArray<WrapperModel>(
+            category.groupedWrappers,
+            (final WrapperModel wrapper, final int index) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: DashboardItem(
+                  wrapper.name,
+                  wrapper.budget,
+                  wrapper.sumTransactions,
+                  showAdd: true,
+                ),
+              );
+            },
+          ).getObjects()
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGroupByCategory(CategoryModel category, int index) {
+    print(category.groupedWrappers);
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: DashboardItem(
+        category.name,
+        category.sumWrappersBudget(),
+        category.sumWrappersSpent(),
+        showAdd: false,
+      ),
+    );
   }
 }

@@ -30,6 +30,8 @@ class ForecastDAO extends RootDAO {
 
       WrapperModel wrapper = WrapperModel.fromMap(mapCategory);
       wrapper.sumTransactions = mapCategory['sumTransactions'] + .0;
+
+      category.groupedWrappers.add(wrapper);
     }
 
     ForecastModel forecast = ForecastModel.fromMap(resCategory[0]);

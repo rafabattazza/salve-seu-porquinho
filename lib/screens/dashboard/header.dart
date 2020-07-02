@@ -20,68 +20,72 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      height: 205,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF5D57EA), Color(0xFF9647DB)]),
-      ),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 24.0),
-                      child: Container(
-                        width: 45,
-                        height: 30,
-                        decoration: BoxDecoration(color: Color(0xFF42424A)),
-                        child: Center(
-                          child: Icon(Icons.attach_money,
-                              color: Colors.greenAccent),
+    return Column(
+      children: <Widget>[
+        Container(
+          width: double.maxFinite,
+          height: 205,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF5D57EA), Color(0xFF9647DB)]),
+          ),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 24.0),
+                          child: Container(
+                            width: 45,
+                            height: 30,
+                            decoration: BoxDecoration(color: Color(0xFF42424A)),
+                            child: Center(
+                              child: Icon(Icons.attach_money,
+                                  color: Colors.greenAccent),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) {
+                          return Configurations();
+                        }));
+                      },
+                      child: Icon(Icons.settings),
+                    )
+                  ],
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) {
-                      return Configurations();
-                    }));
-                  },
-                  child: Icon(Icons.settings),
-                )
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  Utils.numberFormat.format(total),
+                  style: ThemeUtils.ultraThinText.copyWith(fontSize: 36),
+                ),
+              ),
+              Text(_LABEL_TEXT, style: ThemeUtils.ultraThinText),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 24.0, 8.0, 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    DateSelect(this.monthYear, onDateChange),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
-              Utils.numberFormat.format(total),
-              style: ThemeUtils.ultraThinText.copyWith(fontSize: 36),
-            ),
-          ),
-          Text(_LABEL_TEXT, style: ThemeUtils.ultraThinText),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 24.0, 8.0, 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                DateSelect(this.monthYear, onDateChange),
-              ],
-            ),
-          )
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
