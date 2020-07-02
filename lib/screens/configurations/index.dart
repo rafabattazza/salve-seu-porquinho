@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:salveSeuPorquinho/screens/crud/crud_header_buttons.dart';
-import 'package:salveSeuPorquinho/screens/crud/crud_body.dart';
+import 'package:salveSeuPorquinho/screens/configurations/crud_header_buttons.dart';
+import 'package:salveSeuPorquinho/screens/configurations/crud_body.dart';
 
 class Configurations extends StatefulWidget {
   @override
@@ -13,6 +13,11 @@ class _ConfigurationsState extends State<Configurations> {
 
   String _headerText = _HEADER_FORECAST_TEXT;
   String _selectedTab = CrudHeaderButtons.FORECAST_TEXT;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

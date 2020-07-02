@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
-import 'dashboard.dart';
+import 'dashboard/index.dart';
 
 class HowItWorks extends StatelessWidget {
   static const HOW_WORKS_TEXT = "Como Funciona?";
-  static const DESCRIPTION_TEXT = "O SalveSeuPorquinho utiliza a estratégia dos envelopes pra você economizar seu dinheiro.";
-  
+  static const DESCRIPTION_TEXT =
+      "O SalveSeuPorquinho utiliza a estratégia dos envelopes pra você economizar seu dinheiro.";
+
   static const FIRST_STEP = "1º Informe o quanto você recebe por mês";
-  static const SECOND_STEP = "2º Crie os envelopes com suas previsões de despesas para o mês";
-  static const THIRD_STEP = "3º Lance suas despesas em cada envelope durante o mês até atingir o limite mensal de cada evelope";
-  static const FOURTH_STEP = "4º Ajuste os envelopes para o mês seguinte e assim vá ajustando suas despesas";
+  static const SECOND_STEP =
+      "2º Crie os envelopes com suas previsões de despesas para o mês";
+  static const THIRD_STEP =
+      "3º Lance suas despesas em cada envelope durante o mês até atingir o limite mensal de cada evelope";
+  static const FOURTH_STEP =
+      "4º Ajuste os envelopes para o mês seguinte e assim vá ajustando suas despesas";
 
   static const LOGIN_BUTTON_TEXT = "Entrar";
 

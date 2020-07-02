@@ -7,6 +7,10 @@ class ThemeUtils {
     );
   }
 
+  static const TextStyle ultraThinText = TextStyle(
+    fontWeight: FontWeight.w100,
+  );
+
   static const TextStyle thinText = TextStyle(
     fontWeight: FontWeight.w300,
   );
@@ -16,11 +20,7 @@ class ThemeUtils {
   );
 
   static const TextStyle bigText = TextStyle(
-    fontWeight: FontWeight.w500,
-    fontSize: 22,
-    color: Colors.white54
-  );
-
+      fontWeight: FontWeight.w500, fontSize: 22, color: Colors.white54);
 
   static final InputDecoration inputDecoration = InputDecoration(
     filled: true,

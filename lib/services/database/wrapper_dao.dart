@@ -51,4 +51,14 @@ class WrapperDAO extends RootDAO {
     final db = await database;
     await db.delete("Wrapper", where: "wra_id = ?", whereArgs: [wrapper.id]);
   }
+
+  duplicateForecast(int lastForecastId, int nextForecastId) async {
+    final db = await database;
+    await db.execute(
+        " INSERT INTO Wrapper (wra_forecast, wra_category, wra_name, wra_budget)"
+        " SELECT ?, wra_category, wra_name, wra_budget "
+        " FROM Wrapper"
+        " WHERE wra_forecast = ?",
+        [nextForecastId, lastForecastId]);
+  }
 }

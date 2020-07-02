@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:salveSeuPorquinho/screens/crud/Configurations.dart';
+import 'package:salveSeuPorquinho/screens/dashboard/index.dart';
 import 'package:salveSeuPorquinho/screens/how_it_works.dart';
 import 'package:salveSeuPorquinho/services/database/start_db_dao.dart';
 
@@ -96,7 +96,7 @@ class WelcomeScreen extends StatelessWidget {
     await new StartDbDao().startDb();
 
     Navigator.push(context, MaterialPageRoute(builder: (_) {
-      return Configurations();
+      return DashboardScreen();
     }));
   }
 

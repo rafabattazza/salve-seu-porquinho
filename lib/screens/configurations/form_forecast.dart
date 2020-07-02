@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 import 'package:month_picker_strip/month_picker_strip.dart';
 import 'package:salveSeuPorquinho/components/InputFormatters/decimal-text-input-formatter.dart';
 import 'package:salveSeuPorquinho/components/object_array.dart';
 import 'package:salveSeuPorquinho/models/category_model.dart';
 import 'package:salveSeuPorquinho/models/forecast_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
+import 'package:salveSeuPorquinho/services/business/forecast_business.dart';
 import 'package:salveSeuPorquinho/services/database/forecast_dao.dart';
-import 'package:salveSeuPorquinho/services/database/start_db_dao.dart';
 import 'package:salveSeuPorquinho/services/database/wrapper_dao.dart';
 import 'package:salveSeuPorquinho/utils/theme_utils.dart';
+import 'package:salveSeuPorquinho/utils/utils.dart';
 import 'package:salveSeuPorquinho/utils/validation_utils.dart';
-
-final NumberFormat _format = new NumberFormat("##0.00");
 
 class FormForecast extends StatefulWidget {
   FormForecast({Key key}) : super(key: key);
@@ -36,12 +34,15 @@ class _FormForecastState extends State<FormForecast> {
   static const String _INPUT_NAME_TEXT = "Nome do envelope";
   static const String _INPUT_BUGDET_TEXT = "Valor";
 
+  static const String _CONFIRM_DELETE_TEXT =
+      "Confirma a exclusão do envelope '{}'?";
+  static const String _BUTTON_DELETE_TEXT = "Excluir";
+  static const String _BUTTON_CANCELAR_TEXT = "Cancelar";
+
   TextEditingController _invoiceController = new TextEditingController();
   final ForecastDAO _forecastDao = ForecastDAO();
 
   ForecastModel _forecast;
-  List<CategoryModel> _categories = [];
-
   @override
   void initState() {
     super.initState();
@@ -56,7 +57,7 @@ class _FormForecastState extends State<FormForecast> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ..._buildMounthPicker(),
+        ..._buildMonthPicker(),
         TextFormField(
           keyboardType: TextInputType.numberWithOptions(decimal: true),
           controller: _invoiceController,
@@ -69,18 +70,19 @@ class _FormForecastState extends State<FormForecast> {
           padding: const EdgeInsets.fromLTRB(16.0, 24.0, 0, 8.0),
           child: Text("Envelopes de despesas - Informe suas previsões"),
         ),
-        if (this._categories.length == 0)
+        if (this._forecast.categories.length == 0)
           Text("Você não possui nenhuma categoria cadastrada"),
-        if (this._categories.length != 0)
+        if (this._forecast.categories.length != 0)
           ...new ObjectArray<CategoryModel>(
-                  this._categories, _builderCategoryRow)
-              .getObjects(),
+            this._forecast.categories,
+            _builderCategoryRow,
+          ).getObjects(),
       ],
     );
   }
 
-  List<Widget> _buildMounthPicker() {
-    List<Widget> mounthPicker = <Widget>[
+  List<Widget> _buildMonthPicker() {
+    List<Widget> monthPicker = <Widget>[
       Text(
         _DATE_LABEL_TEXT,
       ),
@@ -102,7 +104,7 @@ class _FormForecastState extends State<FormForecast> {
       )
     ];
 
-    return mounthPicker;
+    return monthPicker;
   }
 
   Widget _builderCategoryRow(CategoryModel category, int i) {
@@ -161,7 +163,7 @@ class _FormForecastState extends State<FormForecast> {
                       Text(_AVAILABLE_TEXT),
                       Text(
                         " + " +
-                            _format.format(
+                            Utils.numberFormat.format(
                                 (_forecast.invoice * (category.percent / 100))),
                         style: ThemeUtils.strongText.copyWith(
                           fontSize: 16,
@@ -175,7 +177,8 @@ class _FormForecastState extends State<FormForecast> {
                     children: <Widget>[
                       Text(_BUDGETED_TEXT),
                       Text(
-                        " - " + _format.format(_sumWrappers(category)),
+                        " - " +
+                            Utils.numberFormat.format(_sumWrappers(category)),
                         style: ThemeUtils.strongText.copyWith(
                           fontSize: 16,
                           color: Colors.red,
@@ -189,7 +192,7 @@ class _FormForecastState extends State<FormForecast> {
                       Text(_RESULT_TEXT),
                       Text(
                         " = " +
-                            _format.format(
+                            Utils.numberFormat.format(
                                 (_forecast.invoice * (category.percent / 100) -
                                     _sumWrappers(category))),
                         style: ThemeUtils.strongText.copyWith(
@@ -217,7 +220,9 @@ class _FormForecastState extends State<FormForecast> {
     TextEditingController _nameController =
         new TextEditingController(text: wrapper?.name);
     TextEditingController _budgetController = new TextEditingController(
-        text: wrapper == null ? null : _format.format(wrapper?.budget));
+        text: wrapper == null
+            ? null
+            : Utils.numberFormat.format(wrapper?.budget));
     final _formKey = GlobalKey<FormState>();
 
     const String _BUTTON_DELETE_TEXT = "Excluir";
@@ -306,34 +311,12 @@ class _FormForecastState extends State<FormForecast> {
   }
 
   _loadOrCreatePrevision(DateTime date) async {
-    final ForecastDAO _forecastDao = ForecastDAO();
-    final WrapperDAO _wrapperDao = WrapperDAO();
-
-    ForecastModel _forecast =
-        await _forecastDao.findByMounthAndYear(date.month, date.year);
-    if (_forecast == null) {
-      _forecast = await _forecastDao.findLast();
-      if (_forecast != null) {
-        //Creating from the last forecast
-        _forecast.id = null;
-        _forecast.mounth = date.month;
-        _forecast.year = date.year;
-        await _forecastDao.persist(_forecast);
-      }
-    }
-
-    if (_forecast == null) {
-      await new StartDbDao().createDefaultPrevision();
-      _forecast = await _forecastDao.findByMounthAndYear(date.month, date.year);
-    }
-
-    List<CategoryModel> _categories =
-        await _wrapperDao.findByForecastGroupedByCategory(_forecast.id);
-
+    var _forecastLocal =
+        await ForecastBusiness.loadOrCreateForecast(context, date);
     setState(() {
-      this._invoiceController.text = _format.format(_forecast.invoice);
-      this._forecast = _forecast;
-      this._categories = _categories;
+      this._invoiceController.text =
+          Utils.numberFormat.format(_forecastLocal.invoice);
+      this._forecast = _forecastLocal;
     });
   }
 
@@ -342,7 +325,7 @@ class _FormForecastState extends State<FormForecast> {
     List<CategoryModel> categories =
         await wrapperDao.findByForecastGroupedByCategory(_forecast.id);
     setState(() {
-      this._categories = categories;
+      this._forecast.categories = categories;
     });
   }
 
@@ -350,7 +333,7 @@ class _FormForecastState extends State<FormForecast> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text("Confirma a exclusão do envelope '${wrapper.name}'?"),
+        title: Text(_CONFIRM_DELETE_TEXT.replaceAll("{}", wrapper.name)),
         actions: <Widget>[
           FlatButton(
             onPressed: () async {
@@ -360,13 +343,13 @@ class _FormForecastState extends State<FormForecast> {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
             },
-            child: Text("Excluir"),
+            child: Text(_BUTTON_DELETE_TEXT),
           ),
           FlatButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text("Cancelar"),
+            child: Text(_BUTTON_CANCELAR_TEXT),
           ),
         ],
       ),
@@ -400,8 +383,8 @@ class _WapperRowState extends State<WapperRow> {
   bool deletedSelected = false;
   @override
   Widget build(BuildContext context) {
-    final TextEditingController control =
-        TextEditingController(text: _format.format(widget.wrapper.budget));
+    final TextEditingController control = TextEditingController(
+        text: Utils.numberFormat.format(widget.wrapper.budget));
     return Row(
       children: <Widget>[
         Expanded(
