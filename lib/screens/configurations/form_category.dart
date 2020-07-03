@@ -33,7 +33,7 @@ class _FormCategoriesState extends State<FormCategories> {
   static const String _DELETED_TEXT = "Categoria excluída!";
   static const String _CORRECT_TEXT_BUTTON = "Corrigir Automaticamente";
 
-  final CategoryService _categoryDao = new CategoryService();
+  final CategoryService _categoryService = new CategoryService();
 
   CategoryModel _record;
   int _percentTotal = 0;
@@ -224,7 +224,7 @@ class _FormCategoriesState extends State<FormCategories> {
   }
 
   Future<List<CategoryModel>> _findCategories() async {
-    List<CategoryModel> categories = await _categoryDao.findAll();
+    List<CategoryModel> categories = await _categoryService.findAll();
     this._percentTotal = 0;
     for (var category in categories) {
       this._percentTotal += category.percent;
@@ -245,7 +245,7 @@ class _FormCategoriesState extends State<FormCategories> {
   }
 
   _correctPercentages() async {
-    List<CategoryModel> categories = await _categoryDao.findAll();
+    List<CategoryModel> categories = await _categoryService.findAll();
     int total = 0;
     for (var category in categories) {
       total += category.percent;
@@ -253,19 +253,19 @@ class _FormCategoriesState extends State<FormCategories> {
     int dif = 100 - total;
     if (dif > 0) {
       categories[0].percent += dif;
-      _categoryDao.persist(categories[0]);
+      _categoryService.persist(categories[0]);
     } else {
       dif = dif.abs();
       for (CategoryModel category in categories) {
         if (category.percent > dif) {
           category.percent -= dif;
-          _categoryDao.persist(category);
+          _categoryService.persist(category);
           break;
         } else {
           int subtract = category.percent ~/ 2;
           dif -= subtract;
           category.percent -= subtract;
-          _categoryDao.persist(category);
+          _categoryService.persist(category);
         }
       }
     }
@@ -274,7 +274,7 @@ class _FormCategoriesState extends State<FormCategories> {
 
   _delete() {
     this._record.deleted = true;
-    _categoryDao.persist(this._record);
+    _categoryService.persist(this._record);
 
     final regId = this._record.id;
     final snackBar = SnackBar(
@@ -303,9 +303,9 @@ class _FormCategoriesState extends State<FormCategories> {
   }
 
   _undoDeleted(int id) async {
-    CategoryModel category = await _categoryDao.findById(id);
+    CategoryModel category = await _categoryService.findById(id);
     category.deleted = false;
-    await _categoryDao.persist(category);
+    await _categoryService.persist(category);
     Scaffold.of(context).hideCurrentSnackBar();
     setState(() {});
   }
@@ -326,7 +326,7 @@ class _FormCategoriesState extends State<FormCategories> {
     this._record.name = this._nameController.text;
     this._record.percent = int.parse(this._percentController.text);
     this._record.deleted = false;
-    _categoryDao.persist(this._record);
+    _categoryService.persist(this._record);
     setState(() {
       this._record = null;
     });

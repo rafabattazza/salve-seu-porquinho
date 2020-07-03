@@ -35,7 +35,7 @@ class _FormEntryState extends State<FormEntry> {
 
   static const String _SAVE_TEXT_BUTTON = "Salvar";
 
-  TransacService transacDao = TransacService();
+  TransacService transacService = TransacService();
 
   TransacModel _transac;
   _FormEntryState(this._transac);
@@ -174,7 +174,7 @@ class _FormEntryState extends State<FormEntry> {
   _wrapperIdChange(int _wrapperId) async {
     if (_wrapperId == null) return;
     String _lastDescr = "";
-    _lastDescr = (await transacDao.findLastDescr(_wrapperId)) ??
+    _lastDescr = (await transacService.findLastDescr(_wrapperId)) ??
         _wrappers.firstWhere((wr) => wr.id == _wrapperId).name + " - ";
 
     setState(() {
@@ -217,7 +217,7 @@ class _FormEntryState extends State<FormEntry> {
         DateTime.now(); // TODO implementar o date/timer pick
 
     print(this._transac.toMap());
-    transacDao.persist(this._transac);
+    transacService.persist(this._transac);
 
     Navigator.pop(context, true);
   }

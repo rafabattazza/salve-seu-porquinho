@@ -12,12 +12,12 @@ class ForecastService {
   static Future<ForecastModel> loadIdForecastByDateOrLast(
     DateTime date,
   ) async {
-    final ForecastService _forecastDao = ForecastService();
+    final ForecastService _forecastService = ForecastService();
     ForecastModel _forecast =
-        await _forecastDao.findByMonthAndYear(date.month, date.year);
+        await _forecastService.findByMonthAndYear(date.month, date.year);
 
     if (_forecast == null) {
-      _forecast = await _forecastDao.findLast();
+      _forecast = await _forecastService.findLast();
     }
 
     return _forecast;
@@ -27,22 +27,23 @@ class ForecastService {
     BuildContext context,
     DateTime date,
   ) async {
-    final ForecastService _forecastDao = ForecastService();
+    final ForecastService _forecastService = ForecastService();
     final WrapperService _wrapperService = WrapperService();
 
     ForecastModel _forecast =
-        await _forecastDao.findByMonthAndYear(date.month, date.year);
+        await _forecastService.findByMonthAndYear(date.month, date.year);
     if (_forecast == null) {
-      _forecast = await _forecastDao.findLast();
+      _forecast = await _forecastService.findLast();
       if (_forecast != null) {
         _forecast = await _copyForecast(
-            context, _forecast, date, _forecastDao, _wrapperService);
+            context, _forecast, date, _forecastService, _wrapperService);
       }
     }
 
     if (_forecast == null) {
-      await _forecastDao.createDefaultForecast();
-      _forecast = await _forecastDao.findByMonthAndYear(date.month, date.year);
+      await _forecastService.createDefaultForecast();
+      _forecast =
+          await _forecastService.findByMonthAndYear(date.month, date.year);
     }
 
     List<CategoryModel> _categories =
@@ -57,8 +58,8 @@ class ForecastService {
     BuildContext context,
     ForecastModel _forecast,
     DateTime date,
-    ForecastService _forecastDao,
-    WrapperService _wrapperDao,
+    ForecastService _forecastService,
+    WrapperService _wrapperService,
   ) async {
     DateFormat dateFormat = new DateFormat("MM/yyyy");
     //Creating from the last forecast
@@ -68,8 +69,8 @@ class ForecastService {
     _forecast.id = null;
     _forecast.month = date.month;
     _forecast.year = date.year;
-    await _forecastDao.persist(_forecast);
-    await _wrapperDao.duplicateForecast(lastId, _forecast.id);
+    await _forecastService.persist(_forecast);
+    await _wrapperService.duplicateForecast(lastId, _forecast.id);
 
     const String _COPY_FORECAST_MSG =
         "Não foram localizadas previsões para '{1}', por isso o sistema criou novas com base nas previsões de '{2}'.";
@@ -82,7 +83,7 @@ class ForecastService {
   }
 
   Future<ForecastModel> findWithTransactionsValue(final int forecastId) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
 
     List<Map<String, dynamic>> resCategory = await db.rawQuery(
         " SELECT for_id, for_month, for_year, for_invoice, cat_id, cat_name, cat_percent, wra_id, wra_name, wra_budget, COALESCE(SUM(tra_value), 0) as sumTransactions"
@@ -118,7 +119,7 @@ class ForecastService {
   }
 
   persist(ForecastModel forecast) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
 
     if (forecast.id != null) {
       await db.update("Forecast", forecast.toMap(),
@@ -130,7 +131,7 @@ class ForecastService {
   }
 
   Future<ForecastModel> findByMonthAndYear(int month, int year) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     List<Map<String, dynamic>> res = await db.rawQuery(
         " SELECT *"
         " FROM Forecast"
@@ -141,7 +142,7 @@ class ForecastService {
   }
 
   Future<ForecastModel> findLast() async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     List<Map<String, dynamic>> res = await db.rawQuery(" SELECT *"
         " FROM Forecast"
         " ORDER BY for_year DESC, for_month DESC"
@@ -151,7 +152,7 @@ class ForecastService {
   }
 
   Future<void> createDefaultForecast() async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     final int forecastId = await db.insert(
         "Forecast",
         ForecastModel.all(

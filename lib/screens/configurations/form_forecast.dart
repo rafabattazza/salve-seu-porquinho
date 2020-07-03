@@ -39,7 +39,7 @@ class _FormForecastState extends State<FormForecast> {
   static const String _BUTTON_CANCELAR_TEXT = "Cancelar";
 
   TextEditingController _invoiceController = new TextEditingController();
-  final ForecastService _forecastDao = ForecastService();
+  final ForecastService _forecastService = ForecastService();
 
   ForecastModel _forecast;
   @override
@@ -215,7 +215,7 @@ class _FormForecastState extends State<FormForecast> {
   }
 
   void _editWrapper(WrapperModel wrapper, CategoryModel category) {
-    final WrapperService wrapperDao = WrapperService();
+    final WrapperService wrapperService = WrapperService();
     TextEditingController _nameController =
         new TextEditingController(text: wrapper?.name);
     TextEditingController _budgetController = new TextEditingController(
@@ -235,7 +235,7 @@ class _FormForecastState extends State<FormForecast> {
       wr.name = _nameController.text;
       wr.budget = double.parse(_budgetController.text);
 
-      await wrapperDao.persist(wr);
+      await wrapperService.persist(wr);
       this.refresh();
       Navigator.of(context).pop();
     }
@@ -306,7 +306,7 @@ class _FormForecastState extends State<FormForecast> {
       this._forecast.invoice =
           double.parse(value == null || value.length == 0 ? "0" : value);
     });
-    _forecastDao.persist(this._forecast);
+    _forecastService.persist(this._forecast);
   }
 
   _loadOrCreatePrevision(DateTime date) async {
@@ -320,9 +320,9 @@ class _FormForecastState extends State<FormForecast> {
   }
 
   Future<void> refresh() async {
-    final WrapperService wrapperDao = WrapperService();
+    final WrapperService wrapperService = WrapperService();
     List<CategoryModel> categories =
-        await wrapperDao.findByForecastGroupedByCategory(_forecast.id);
+        await wrapperService.findByForecastGroupedByCategory(_forecast.id);
     setState(() {
       this._forecast.categories = categories;
     });
@@ -336,8 +336,8 @@ class _FormForecastState extends State<FormForecast> {
         actions: <Widget>[
           FlatButton(
             onPressed: () async {
-              WrapperService _wrapperDao = WrapperService();
-              await _wrapperDao.delete(wrapper);
+              WrapperService _wrapperService = WrapperService();
+              await _wrapperService.delete(wrapper);
               await this.refresh();
               Navigator.of(context).pop();
               Navigator.of(context).pop();

@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 class CategoryService {
   Future<List<CategoryModel>> findAll() async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     List<Map<String, dynamic>> res = await db.rawQuery(" SELECT *"
         " FROM Category"
         " WHERE cat_deleted = 0"
@@ -17,7 +17,7 @@ class CategoryService {
   }
 
   Future<CategoryModel> findById(int id) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     List<Map<String, dynamic>> res = await db.rawQuery(
         " SELECT *"
         " FROM Category"
@@ -28,7 +28,7 @@ class CategoryService {
   }
 
   persist(CategoryModel category) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     if (category.id != null) {
       await db.update("Category", category.toMap(),
           where: "cat_id = ?", whereArgs: [category.id]);
@@ -39,7 +39,7 @@ class CategoryService {
   }
 
   Future<void> createDefaultCategory() async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     Batch batch = db.batch();
     batch.insert("Category",
         CategoryModel.all(1, "Despesas Essenciais", 55, false).toMap());

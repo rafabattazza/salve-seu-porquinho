@@ -4,7 +4,7 @@ import 'database_service.dart';
 
 class WrapperService {
   Future<List<WrapperModel>> findByForecast(final int forecastId) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     List<Map<String, dynamic>> res = await db.rawQuery(
         " SELECT *"
         " FROM Wrapper "
@@ -18,7 +18,7 @@ class WrapperService {
 
   Future<List<CategoryModel>> findByForecastGroupedByCategory(
       final int forecastId) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
 
     List<Map<String, dynamic>> resCategory = await db.rawQuery(" SELECT *"
         " FROM Category "
@@ -50,7 +50,7 @@ class WrapperService {
   }
 
   persist(WrapperModel wrapper) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     if (wrapper.id != null) {
       await db.update("Wrapper", wrapper.toMap(),
           where: "wra_id = ?", whereArgs: [wrapper.id]);
@@ -61,12 +61,12 @@ class WrapperService {
   }
 
   delete(WrapperModel wrapper) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     await db.delete("Wrapper", where: "wra_id = ?", whereArgs: [wrapper.id]);
   }
 
   duplicateForecast(int lastForecastId, int nextForecastId) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     await db.execute(
         " INSERT INTO Wrapper (wra_forecast, wra_category, wra_name, wra_budget)"
         " SELECT ?, wra_category, wra_name, wra_budget "

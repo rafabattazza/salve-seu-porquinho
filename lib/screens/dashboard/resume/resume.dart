@@ -16,7 +16,7 @@ class ResumeScreen extends StatefulWidget {
 }
 
 class _ResumeScreenState extends State<ResumeScreen> {
-  final ForecastService forecastDao = new ForecastService();
+  final ForecastService forecastService = new ForecastService();
 
   ForecastModel _forecast;
   double spentValues = 0;
@@ -75,7 +75,7 @@ class _ResumeScreenState extends State<ResumeScreen> {
 
   Future<void> _loadDate(DateTime date) async {
     var forecast = await ForecastService().loadOrCreateForecast(context, date);
-    forecast = await forecastDao.findWithTransactionsValue(forecast.id);
+    forecast = await forecastService.findWithTransactionsValue(forecast.id);
 
     setState(() {
       this.date = date;

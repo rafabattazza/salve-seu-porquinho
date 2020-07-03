@@ -94,7 +94,7 @@ class WelcomeScreen extends StatelessWidget {
   }
 
   void _handleBtnLogInClick(BuildContext context) async {
-    await new DataBaseService().startDb();
+    await DbService().startDb();
 
     Navigator.push(context, MaterialPageRoute(builder: (_) {
       return DashboardScreen();

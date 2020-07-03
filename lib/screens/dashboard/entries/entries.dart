@@ -29,8 +29,8 @@ class _EntriesScreenState extends State<EntriesScreen> {
   List<WrapperModel> _wrappers = [];
   List<TransacModel> _transactions = [];
 
-  WrapperService wrapperDao = new WrapperService();
-  TransacService transacDao = new TransacService();
+  WrapperService wrapperService = new WrapperService();
+  TransacService transacService = new TransacService();
 
   @override
   void initState() {
@@ -170,7 +170,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
   _mniMoreOptions(String opt, TransacModel transac) async {
     if ((await QuestionDialog.showQuestion(
         context, _DELETE_MESSAGE.replaceAll("{}", transac.descr)))) {
-      await transacDao.delete(transac.id);
+      await transacService.delete(transac.id);
       await _loadData(_filter);
     }
   }
@@ -180,9 +180,10 @@ class _EntriesScreenState extends State<EntriesScreen> {
         .loadOrCreateForecast(context, _filter.monthYear);
 
     List<WrapperModel> _wrappers =
-        await wrapperDao.findByForecast(_forecast.id);
+        await wrapperService.findByForecast(_forecast.id);
 
-    List<TransacModel> _transactions = await transacDao.findByFilter(_filter);
+    List<TransacModel> _transactions =
+        await transacService.findByFilter(_filter);
 
     setState(() {
       this._wrappers = _wrappers;

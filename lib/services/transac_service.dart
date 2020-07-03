@@ -5,7 +5,7 @@ import 'database_service.dart';
 
 class TransacService {
   Future<List<TransacModel>> findByFilter(final FilterDto filter) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     List<Map<String, dynamic>> res = await db.rawQuery(
         " SELECT *"
                 " FROM Transac "
@@ -23,7 +23,7 @@ class TransacService {
   }
 
   Future<String> findLastDescr(final int wrapperId) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     List<Map<String, dynamic>> res = await db.rawQuery(
         " SELECT tra_descr"
                 " FROM Transac "
@@ -35,7 +35,7 @@ class TransacService {
   }
 
   persist(TransacModel transaction) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     if (transaction.id != null) {
       await db.update("Transac", transaction.toMap(),
           where: "tra_id = ?", whereArgs: [transaction.id]);
@@ -46,7 +46,7 @@ class TransacService {
   }
 
   delete(int tra_id) async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     db.delete(
       "transac",
       where: "tra_id = ?",

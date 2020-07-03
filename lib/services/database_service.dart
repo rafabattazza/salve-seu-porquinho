@@ -7,17 +7,17 @@ import 'package:sqflite/sqflite.dart';
 
 import 'forecast_service.dart';
 
-class DataBaseService {
-  Database _database;
+class DbService {
+  static Database _db;
 
-  Future<Database> get database async {
-    if (_database != null) return _database;
+  static Future<Database> get db async {
+    if (_db != null) return _db;
 
-    _database = await initDB();
-    return _database;
+    _db = await initDB();
+    return _db;
   }
 
-  initDB() async {
+  static initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
 
     String path = join(documentsDirectory.path, "database.db");
@@ -77,7 +77,7 @@ class DataBaseService {
   }
 
   startDb() async {
-    final db = await DataBaseService().database;
+    final db = await DbService.db;
     int count = Sqflite.firstIntValue(
         await db.rawQuery("SELECT COUNT(*) FROM Category"));
     if (count == 0) {
