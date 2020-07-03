@@ -22,7 +22,7 @@ class WrapperModel {
           ForecastModel.fromMap(json),
           CategoryModel.fromMap(json),
           json["wra_name"],
-          json["wra_budget"] + .0);
+          json["wra_budget"] == null ? null : json["wra_budget"] + .0);
 
   Map<String, dynamic> toMap() => {
         "wra_id": id,

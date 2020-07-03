@@ -15,11 +15,6 @@ class _ConfigurationsState extends State<Configurations> {
   String _selectedTab = CrudHeaderButtons.FORECAST_TEXT;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,

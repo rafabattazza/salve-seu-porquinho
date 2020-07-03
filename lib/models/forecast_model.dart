@@ -1,13 +1,3 @@
-// CategoryModel categoryFromJson(String str) {
-//   final jsonData = json.decode(str);
-//   return CategoryModel.fromMap(jsonData);
-// }
-
-// String categoryToJson(CategoryModel data) {
-//   final dyn = data.toMap();
-//   return json.encode(dyn);
-// }
-
 import 'package:salveSeuPorquinho/models/category_model.dart';
 
 class ForecastModel {
@@ -28,14 +18,6 @@ class ForecastModel {
     return categories
         .map((e) => e.sumWrappersSpent())
         .reduce((value, element) => value + element);
-
-    // double total = 0.0;
-    // categories.forEach((category) {
-    //   (category.groupedWrappers ?? []).forEach((wrapper) {
-    //     total += wrapper.sumTransactions ?? 0;
-    //   });
-    // });
-    // return total;
   }
 
   factory ForecastModel.fromMap(Map<String, dynamic> json) =>

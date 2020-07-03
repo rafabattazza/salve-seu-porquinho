@@ -1,3 +1,5 @@
+- Formulario para criação de lançamento (form_entry.dart) precisa colocar um DatePicker no data e um timePicker no time para permitir ao usuário alterar a Data de Hora do lançamento
+
 - Converter DAO em Store ou Service e remover o Business
 
 - DASHBOARD - Question Message no SAIR

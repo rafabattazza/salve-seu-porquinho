@@ -20,7 +20,7 @@ class DashboardFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Color(0xFF12121A)),
+      decoration: BoxDecoration(color: Color(0xFF22222A)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
@@ -39,7 +39,7 @@ class DashboardFooter extends StatelessWidget {
     return InkWell(
       child: Container(
         decoration: BoxDecoration(
-          color: Color(0xFF12121A),
+          color: Color(0xFF22222A),
           border: selected
               ? Border(top: BorderSide(width: 3.0, color: Color(0xFF9647DB)))
               : null,

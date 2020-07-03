@@ -51,8 +51,7 @@ abstract class RootDAO {
               "  tra_wrapper INTEGER NOT NULL,"
               "  tra_descr TEXT NOT NULL,"
               "  tra_value NUMBER NOT NULL,"
-              "  tra_date DATE NOT NULL,"
-              "  tra_time TIME NOT NULL,"
+              "  tra_date DATETIME NOT NULL,"
               "  FOREIGN KEY (tra_wrapper) REFERENCES Wrapper (wra_id)"
               " );");
         }

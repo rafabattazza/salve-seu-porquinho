@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:salveSeuPorquinho/models/transac_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
 import 'package:salveSeuPorquinho/screens/dashboard/components/date_select.dart';
 import 'package:salveSeuPorquinho/screens/dashboard/entries/filter_dto.dart';
+import 'package:salveSeuPorquinho/screens/dashboard/entries/form_entry.dart';
 
 class Header extends StatelessWidget {
   static const _NEW_TEXT = "Novo";
+  static const _WRAPPER_FILTER_TEXT = "Filtrar por envelope";
 
   final FilterDto _filter;
   final List<WrapperModel> wrappers;
@@ -23,7 +26,7 @@ class Header extends StatelessWidget {
       children: <Widget>[
         Container(
           width: double.maxFinite,
-          height: 107,
+          height: 128,
           decoration: BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -35,11 +38,23 @@ class Header extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    DropdownButton<int>(
+                    Expanded(
+                      child: DropdownButtonFormField<int>(
+                        decoration: InputDecoration(
+                          labelText: _WRAPPER_FILTER_TEXT,
+                        ),
+                        value: _filter.wrapperId,
                         items: _getWrapperMenuItens(),
-                        onChanged: (e) => print(e)),
-                    // TextField()
+                        onChanged: (wId) => _wrapperIdChange(wId),
+                      ),
+                    ),
+                    if (this._filter.wrapperId != null)
+                      IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () => _wrapperIdChange(null),
+                      )
                   ],
                 ),
                 Row(
@@ -48,7 +63,7 @@ class Header extends StatelessWidget {
                     DateSelect(_filter.monthYear, _dateChange),
                     RaisedButton(
                       color: Color(0xFF560FE5),
-                      onPressed: () => print("a"),
+                      onPressed: () => _onBtnNewAction(context),
                       child: Row(
                         children: <Widget>[
                           Icon(Icons.add),
@@ -68,7 +83,6 @@ class Header extends StatelessWidget {
   }
 
   List<DropdownMenuItem<int>> _getWrapperMenuItens() {
-    print('entrou');
     if (this.wrappers == null || this.wrappers.length == 0) return [];
     var res = this
         .wrappers
@@ -77,21 +91,27 @@ class Header extends StatelessWidget {
               value: e.id,
             ))
         .toList();
-    print('aqui');
-    print(res);
 
     return res;
   }
 
   _dateChange(DateTime date) {
-    onFilterChange(this._filter.copyWith(monthYear: date));
+    FilterDto _filter = this._filter.copyWith(monthYear: date);
+    _filter.wrapperId = null;
+    onFilterChange(_filter);
   }
 
   _wrapperIdChange(int wrapperId) {
-    onFilterChange(this._filter.copyWith(wrapperId: wrapperId));
+    FilterDto _filter = this._filter.copyWith(wrapperId: wrapperId);
+    if (wrapperId == null) _filter.wrapperId = null;
+    onFilterChange(_filter);
   }
 
-  _queryChange(String query) {
-    onFilterChange(this._filter.copyWith(query: query));
+  _onBtnNewAction(BuildContext context) async {
+    final saved = await Navigator.push(context, MaterialPageRoute(builder: (_) {
+          return FormEntry(TransacModel(), this.wrappers, _filter.wrapperId);
+        })) ??
+        false;
+    if (saved) onFilterChange(_filter);
   }
 }

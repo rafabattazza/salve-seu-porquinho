@@ -1,9 +1,9 @@
 class FilterDto {
   final DateTime monthYear;
-  final int wrapperId;
+  int wrapperId;
   final String query;
 
-  const FilterDto(
+  FilterDto(
     this.monthYear, {
     this.wrapperId,
     this.query,
