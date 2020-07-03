@@ -74,7 +74,7 @@ class _ResumeScreenState extends State<ResumeScreen> {
     );
   }
 
-  void _loadDate(DateTime date) async {
+  Future<void> _loadDate(DateTime date) async {
     var forecast = await ForecastBusiness.loadOrCreateForecast(context, date);
     forecast = await forecastDao.findWithTransactionsValue(forecast.id);
 
@@ -117,6 +117,9 @@ class _ResumeScreenState extends State<ResumeScreen> {
                   wrapper.budget,
                   wrapper.sumTransactions,
                   showAdd: true,
+                  forecastId: _forecast.id,
+                  wrapperId: wrapper.id,
+                  onRefresh: () => _onBtnAddSaved(),
                 ),
               );
             },
@@ -126,16 +129,16 @@ class _ResumeScreenState extends State<ResumeScreen> {
     );
   }
 
+  _onBtnAddSaved() async {
+    await _loadDate(this.date);
+  }
+
   Widget _buildGroupByCategory(CategoryModel category, int index) {
     print(category.groupedWrappers);
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
-      child: DashboardItem(
-        category.name,
-        category.sumWrappersBudget(),
-        category.sumWrappersSpent(),
-        showAdd: false,
-      ),
+      child: DashboardItem(category.name, category.sumWrappersBudget(),
+          category.sumWrappersSpent()),
     );
   }
 }

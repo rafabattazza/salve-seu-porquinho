@@ -11,11 +11,11 @@ import 'package:salveSeuPorquinho/utils/validation_utils.dart';
 
 class FormEntry extends StatefulWidget {
   final TransacModel _transac;
-  final List<WrapperModel> _wrappers;
   final int _startWrapperId;
+  final int _forecastId;
   FormEntry(
     this._transac,
-    this._wrappers,
+    this._forecastId,
     this._startWrapperId, {
     Key key,
   }) : super(key: key);
@@ -49,6 +49,7 @@ class _FormEntryState extends State<FormEntry> {
   }
 
   int _wrapperId;
+  List<WrapperModel> _wrappers;
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _descrController = new TextEditingController();
@@ -159,8 +160,8 @@ class _FormEntryState extends State<FormEntry> {
   }
 
   List<DropdownMenuItem<int>> _getWrapperMenuItens() {
-    if (widget._wrappers == null || widget._wrappers.length == 0) return [];
-    var res = widget._wrappers
+    if (_wrappers == null || _wrappers.length == 0) return [];
+    var res = _wrappers
         .map((e) => new DropdownMenuItem(
               child: Text(e.name),
               value: e.id,
@@ -171,9 +172,10 @@ class _FormEntryState extends State<FormEntry> {
   }
 
   _wrapperIdChange(int _wrapperId) async {
+    if (_wrapperId == null) return;
     String _lastDescr = "";
     _lastDescr = (await transacDao.findLastDescr(_wrapperId)) ??
-        widget._wrappers.firstWhere((wr) => wr.id == _wrapperId).name + " - ";
+        _wrappers.firstWhere((wr) => wr.id == _wrapperId).name + " - ";
 
     setState(() {
       this._wrapperId = _wrapperId;
@@ -181,8 +183,12 @@ class _FormEntryState extends State<FormEntry> {
     });
   }
 
-  _edit(TransacModel transac) {
+  _edit(TransacModel transac) async {
+    var _wrs = await WrapperDAO().findByForecast(widget._forecastId);
+
     setState(() {
+      this._wrappers = _wrs;
+
       this._wrapperId = transac?.wrapper?.id ?? widget._startWrapperId;
       this._valueController.text = transac?.value == null
           ? null
@@ -193,6 +199,10 @@ class _FormEntryState extends State<FormEntry> {
       this._timeController.text =
           new DateFormat("HH:mm").format(transac?.date ?? DateTime.now());
     });
+
+    if (transac.id == null) {
+      await _wrapperIdChange(transac?.wrapper?.id ?? widget._startWrapperId);
+    }
   }
 
   _save() {

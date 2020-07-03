@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:salveSeuPorquinho/models/transac_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
+import 'package:salveSeuPorquinho/screens/dashboard/entries/form_entry.dart';
 import 'package:salveSeuPorquinho/utils/theme_utils.dart';
 import 'package:salveSeuPorquinho/utils/utils.dart';
 
@@ -10,11 +12,17 @@ class DashboardItem extends StatelessWidget {
   final double spent;
 
   final bool showAdd;
+  final int wrapperId;
+  final int forecastId;
+  final Function onRefresh;
   const DashboardItem(
     this.text,
     this.budget,
     this.spent, {
-    this.showAdd = true,
+    this.onRefresh,
+    this.wrapperId,
+    this.forecastId,
+    this.showAdd = false,
     Key key,
   }) : super(key: key);
 
@@ -103,7 +111,7 @@ class DashboardItem extends StatelessWidget {
                   size: 32,
                 )),
                 onTap: () {
-                  print("a");
+                  _onBtnAddClick(context);
                 },
               ),
             ],
@@ -111,5 +119,13 @@ class DashboardItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _onBtnAddClick(BuildContext context) async {
+    final saved = await Navigator.push(context, MaterialPageRoute(builder: (_) {
+          return FormEntry(new TransacModel(), this.forecastId, this.wrapperId);
+        })) ??
+        false;
+    if (saved) await onRefresh();
   }
 }

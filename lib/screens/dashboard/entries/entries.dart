@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:salveSeuPorquinho/components/object_array.dart';
+import 'package:salveSeuPorquinho/components/question_dialog.dart';
 import 'package:salveSeuPorquinho/models/forecast_model.dart';
 import 'package:salveSeuPorquinho/models/transac_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
@@ -22,6 +23,7 @@ class EntriesScreen extends StatefulWidget {
 
 class _EntriesScreenState extends State<EntriesScreen> {
   static const _DELETE_TEXT = "Excluir";
+  static const _DELETE_MESSAGE = "Confirma a exclusão da transação '{}'?";
 
   FilterDto _filter = FilterDto(DateTime.now());
   List<WrapperModel> _wrappers = [];
@@ -129,8 +131,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: PopupMenuButton<String>(
-                          onSelected: (opt) =>
-                              _mniMoreOptions(opt, transacion.id),
+                          onSelected: (opt) => _mniMoreOptions(opt, transacion),
                           itemBuilder: (BuildContext context) {
                             return [
                               PopupMenuItem<String>(
@@ -160,19 +161,23 @@ class _EntriesScreenState extends State<EntriesScreen> {
 
   _editTransaction(final TransacModel _transaction) async {
     final saved = await Navigator.push(context, MaterialPageRoute(builder: (_) {
-          return FormEntry(_transaction, this._wrappers, null);
+          return FormEntry(_transaction, this._wrappers[0].forecast.id, null);
         })) ??
         false;
     if (saved) await _loadData(_filter);
   }
 
-  _mniMoreOptions(String opt, int transac_id) {
-    print(opt + transac_id.toString());
+  _mniMoreOptions(String opt, TransacModel transac) async {
+    if ((await QuestionDialog.showQuestion(
+        context, _DELETE_MESSAGE.replaceAll("{}", transac.descr)))) {
+      await transacDao.delete(transac.id);
+      await _loadData(_filter);
+    }
   }
 
   _loadData(FilterDto _filter) async {
     ForecastModel _forecast =
-        await ForecastBusiness.loadIdForecastByDateOrLast(_filter.monthYear);
+        await ForecastBusiness.loadOrCreateForecast(context, _filter.monthYear);
 
     List<WrapperModel> _wrappers =
         await wrapperDao.findByForecast(_forecast.id);

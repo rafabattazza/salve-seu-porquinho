@@ -8,6 +8,7 @@ class WrapperDAO extends RootDAO {
     List<Map<String, dynamic>> res = await db.rawQuery(
         " SELECT *"
         " FROM Wrapper "
+        " INNER JOIN Forecast ON for_id = wra_forecast "
         " WHERE wra_forecast = ? "
         " ORDER BY wra_name",
         [forecastId]);

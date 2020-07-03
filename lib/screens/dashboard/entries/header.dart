@@ -109,7 +109,8 @@ class Header extends StatelessWidget {
 
   _onBtnNewAction(BuildContext context) async {
     final saved = await Navigator.push(context, MaterialPageRoute(builder: (_) {
-          return FormEntry(TransacModel(), this.wrappers, _filter.wrapperId);
+          return FormEntry(
+              TransacModel(), this.wrappers[0].forecast.id, _filter.wrapperId);
         })) ??
         false;
     if (saved) onFilterChange(_filter);
