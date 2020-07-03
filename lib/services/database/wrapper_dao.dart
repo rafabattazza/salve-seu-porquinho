@@ -3,6 +3,18 @@ import 'package:salveSeuPorquinho/models/wrapper_model.dart';
 import 'package:salveSeuPorquinho/services/database/root_dao.dart';
 
 class WrapperDAO extends RootDAO {
+  Future<List<WrapperModel>> findByForecast(final int forecastId) async {
+    final db = await database;
+    List<Map<String, dynamic>> res = await db.rawQuery(
+        " SELECT *"
+        " FROM Wrapper "
+        " WHERE wra_forecast = ? "
+        " ORDER BY wra_name",
+        [forecastId]);
+
+    return res.isEmpty ? [] : res.map((e) => WrapperModel.fromMap(e)).toList();
+  }
+
   Future<List<CategoryModel>> findByForecastGroupedByCategory(
       final int forecastId) async {
     final db = await database;

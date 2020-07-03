@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:salveSeuPorquinho/screens/configurations/index.dart';
-import 'package:salveSeuPorquinho/screens/dashboard/date_select.dart';
+import 'package:salveSeuPorquinho/screens/configurations/configurations.dart';
+import 'package:salveSeuPorquinho/screens/dashboard/components/date_select.dart';
 import 'package:salveSeuPorquinho/utils/theme_utils.dart';
 import 'package:salveSeuPorquinho/utils/utils.dart';
 

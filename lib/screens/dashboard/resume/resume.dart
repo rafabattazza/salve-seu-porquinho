@@ -4,18 +4,19 @@ import 'package:salveSeuPorquinho/components/object_array.dart';
 import 'package:salveSeuPorquinho/models/category_model.dart';
 import 'package:salveSeuPorquinho/models/forecast_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
-import 'package:salveSeuPorquinho/screens/dashboard/dashboard_item.dart';
-import 'package:salveSeuPorquinho/screens/dashboard/tabs_button.dart';
 import 'package:salveSeuPorquinho/services/business/forecast_business.dart';
 import 'package:salveSeuPorquinho/services/database/forecast_dao.dart';
-import 'header.dart';
 
-class DashboardScreen extends StatefulWidget {
+import 'header.dart';
+import 'dashboard_item.dart';
+import 'tabs_button.dart';
+
+class ResumeScreen extends StatefulWidget {
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  _ResumeScreenState createState() => _ResumeScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _ResumeScreenState extends State<ResumeScreen> {
   final ForecastDAO forecastDao = new ForecastDAO();
 
   ForecastModel _forecast;
@@ -33,44 +34,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: 230,
-              child: Stack(
-                alignment: AlignmentDirectional.bottomCenter,
-                children: <Widget>[
-                  Header(
-                    (_forecast?.invoice ?? 0) -
-                        (_forecast?.sumCategoriesSpent() ?? 0),
-                    date,
-                    (DateTime d) {
-                      _loadDate(d);
-                    },
-                  ),
-                  TabsButton(selectedTab, (tab) {
-                    setState(() {
-                      this.selectedTab = tab;
-                    });
-                  }),
-                ],
-              ),
+    return SafeArea(
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 230,
+            child: Stack(
+              alignment: AlignmentDirectional.bottomCenter,
+              children: <Widget>[
+                Header(
+                  (_forecast?.invoice ?? 0) -
+                      (_forecast?.sumCategoriesSpent() ?? 0),
+                  date,
+                  (DateTime d) {
+                    _loadDate(d);
+                  },
+                ),
+                TabsButton(selectedTab, (tab) {
+                  setState(() {
+                    this.selectedTab = tab;
+                  });
+                }),
+              ],
             ),
-            Padding(padding: EdgeInsets.only(top: 16)),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _buildList(),
-                    )),
-              ),
+          ),
+          Padding(padding: EdgeInsets.only(top: 16)),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _buildList(),
+                  )),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

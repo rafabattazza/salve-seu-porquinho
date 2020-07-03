@@ -1,0 +1,22 @@
+- Converter DAO em Store ou Service e remover o Business
+
+- DASHBOARD - Question Message no SAIR
+
+- Relatórios
+  - Despess médias por envelope/categoria por 1/3/6/12 últimos meses
+  - 
+- Revisar o botão voltar
+
+- Tratamento global de erros
+
+- Loading no InitState das telas: As telas que possuem InitState com Select no banco precisam exibir um Loading
+  enquanto a select estiver sendo executada
+
+- Estudar animações de transição, principalmente ao trocar de tela no Dashboard clicando no Footer
+  Seria bom que a troca de uma tela para outra fosse feita através de um slider ou algo assim
+
+
+
+//Futuro
+- Integração com o GoogleDriver permitindo acesso aos dados de vários celulares
+- Criação de conta com email/telefone e senha

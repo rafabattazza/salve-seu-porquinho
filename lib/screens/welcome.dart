@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:salveSeuPorquinho/screens/dashboard/index.dart';
 import 'package:salveSeuPorquinho/screens/how_it_works.dart';
 import 'package:salveSeuPorquinho/services/database/start_db_dao.dart';
+
+import 'dashboard/dashboard.dart';
 
 class WelcomeScreen extends StatelessWidget {
   static const BACKGROUND = AssetImage("assets/images/bg.jpg");

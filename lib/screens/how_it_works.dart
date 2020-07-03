@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'dashboard/index.dart';
+import 'dashboard/dashboard.dart';
 
 class HowItWorks extends StatelessWidget {
   static const HOW_WORKS_TEXT = "Como Funciona?";

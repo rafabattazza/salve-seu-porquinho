@@ -8,8 +8,19 @@ import 'package:salveSeuPorquinho/services/database/start_db_dao.dart';
 import 'package:salveSeuPorquinho/services/database/wrapper_dao.dart';
 
 class ForecastBusiness {
-  static const String _COPY_FORECAST_MSG =
-      "Não foram localizadas previsões para '{1}', por isso o sistema criou novas com base nas previsões de '{2}'.";
+  static Future<ForecastModel> loadIdForecastByDateOrLast(
+    DateTime date,
+  ) async {
+    final ForecastDAO _forecastDao = ForecastDAO();
+    ForecastModel _forecast =
+        await _forecastDao.findByMonthAndYear(date.month, date.year);
+
+    if (_forecast == null) {
+      _forecast = await _forecastDao.findLast();
+    }
+
+    return _forecast;
+  }
 
   static Future<ForecastModel> loadOrCreateForecast(
     BuildContext context,
@@ -59,6 +70,8 @@ class ForecastBusiness {
     await _forecastDao.persist(_forecast);
     await _wrapperDao.duplicateForecast(lastId, _forecast.id);
 
+    const String _COPY_FORECAST_MSG =
+        "Não foram localizadas previsões para '{1}', por isso o sistema criou novas com base nas previsões de '{2}'.";
     await InfoDialog.showInfo(
         context,
         _COPY_FORECAST_MSG
