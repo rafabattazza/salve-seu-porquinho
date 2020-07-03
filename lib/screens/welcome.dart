@@ -47,14 +47,14 @@ class WelcomeScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.all(32),
+                  padding: EdgeInsets.all(24),
                   child: Text(
                     TITLE_TEXT,
                     style: TITLE_STYLE,
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(8, paddingTop, 8, 32),
+                  padding: EdgeInsets.fromLTRB(8, paddingTop, 8, 16),
                   child: Text(
                     DESCRIPTION_TEXT,
                     textAlign: TextAlign.center,

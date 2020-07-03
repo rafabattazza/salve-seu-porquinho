@@ -71,6 +71,9 @@ class _FormEntryState extends State<FormEntry> {
                 colors: [Color(0xFF5D57EA), Color(0xFF9647DB)]),
           ),
         ),
+        actions: <Widget>[
+          FlatButton(onPressed: _save, child: Icon(Icons.save))
+        ],
         elevation: 0,
       ),
       body: Container(
@@ -135,22 +138,6 @@ class _FormEntryState extends State<FormEntry> {
                     )
                   ],
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  RaisedButton(
-                    color: Colors.blue,
-                    onPressed: () {
-                      _save();
-                    },
-                    child: Text(
-                      _SAVE_TEXT_BUTTON,
-                      style: TextStyle(fontSize: 18.0, color: Colors.white),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
