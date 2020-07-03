@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salveSeuPorquinho/screens/how_it_works.dart';
-import 'package:salveSeuPorquinho/services/database/start_db_dao.dart';
+import 'package:salveSeuPorquinho/services/database_service.dart';
 
 import 'dashboard/dashboard.dart';
 
@@ -94,7 +94,7 @@ class WelcomeScreen extends StatelessWidget {
   }
 
   void _handleBtnLogInClick(BuildContext context) async {
-    await new StartDbDao().startDb();
+    await new DataBaseService().startDb();
 
     Navigator.push(context, MaterialPageRoute(builder: (_) {
       return DashboardScreen();

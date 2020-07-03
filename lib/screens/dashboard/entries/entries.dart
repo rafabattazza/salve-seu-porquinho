@@ -8,9 +8,9 @@ import 'package:salveSeuPorquinho/models/transac_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
 import 'package:salveSeuPorquinho/screens/dashboard/entries/filter_dto.dart';
 import 'package:salveSeuPorquinho/screens/dashboard/entries/form_entry.dart';
-import 'package:salveSeuPorquinho/services/business/forecast_business.dart';
-import 'package:salveSeuPorquinho/services/database/transac_dao.dart';
-import 'package:salveSeuPorquinho/services/database/wrapper_dao.dart';
+import 'package:salveSeuPorquinho/services/forecast_service.dart';
+import 'package:salveSeuPorquinho/services/transac_service.dart';
+import 'package:salveSeuPorquinho/services/wrapper_service.dart';
 import 'package:salveSeuPorquinho/utils/theme_utils.dart';
 import 'package:salveSeuPorquinho/utils/utils.dart';
 
@@ -29,8 +29,8 @@ class _EntriesScreenState extends State<EntriesScreen> {
   List<WrapperModel> _wrappers = [];
   List<TransacModel> _transactions = [];
 
-  WrapperDAO wrapperDao = new WrapperDAO();
-  TransacDAO transacDao = new TransacDAO();
+  WrapperService wrapperDao = new WrapperService();
+  TransacService transacDao = new TransacService();
 
   @override
   void initState() {
@@ -176,8 +176,8 @@ class _EntriesScreenState extends State<EntriesScreen> {
   }
 
   _loadData(FilterDto _filter) async {
-    ForecastModel _forecast =
-        await ForecastBusiness.loadOrCreateForecast(context, _filter.monthYear);
+    ForecastModel _forecast = await ForecastService()
+        .loadOrCreateForecast(context, _filter.monthYear);
 
     List<WrapperModel> _wrappers =
         await wrapperDao.findByForecast(_forecast.id);

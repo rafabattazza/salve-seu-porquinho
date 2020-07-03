@@ -4,8 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:salveSeuPorquinho/models/transac_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
-import 'package:salveSeuPorquinho/services/database/transac_dao.dart';
-import 'package:salveSeuPorquinho/services/database/wrapper_dao.dart';
+import 'package:salveSeuPorquinho/services/transac_service.dart';
+import 'package:salveSeuPorquinho/services/wrapper_service.dart';
 import 'package:salveSeuPorquinho/utils/utils.dart';
 import 'package:salveSeuPorquinho/utils/validation_utils.dart';
 
@@ -35,7 +35,7 @@ class _FormEntryState extends State<FormEntry> {
 
   static const String _SAVE_TEXT_BUTTON = "Salvar";
 
-  TransacDAO transacDao = TransacDAO();
+  TransacService transacDao = TransacService();
 
   TransacModel _transac;
   _FormEntryState(this._transac);
@@ -184,7 +184,7 @@ class _FormEntryState extends State<FormEntry> {
   }
 
   _edit(TransacModel transac) async {
-    var _wrs = await WrapperDAO().findByForecast(widget._forecastId);
+    var _wrs = await WrapperService().findByForecast(widget._forecastId);
 
     setState(() {
       this._wrappers = _wrs;

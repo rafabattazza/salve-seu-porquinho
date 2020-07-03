@@ -4,8 +4,7 @@ import 'package:salveSeuPorquinho/components/object_array.dart';
 import 'package:salveSeuPorquinho/models/category_model.dart';
 import 'package:salveSeuPorquinho/models/forecast_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
-import 'package:salveSeuPorquinho/services/business/forecast_business.dart';
-import 'package:salveSeuPorquinho/services/database/forecast_dao.dart';
+import 'package:salveSeuPorquinho/services/forecast_service.dart';
 
 import 'header.dart';
 import 'dashboard_item.dart';
@@ -17,7 +16,7 @@ class ResumeScreen extends StatefulWidget {
 }
 
 class _ResumeScreenState extends State<ResumeScreen> {
-  final ForecastDAO forecastDao = new ForecastDAO();
+  final ForecastService forecastDao = new ForecastService();
 
   ForecastModel _forecast;
   double spentValues = 0;
@@ -75,7 +74,7 @@ class _ResumeScreenState extends State<ResumeScreen> {
   }
 
   Future<void> _loadDate(DateTime date) async {
-    var forecast = await ForecastBusiness.loadOrCreateForecast(context, date);
+    var forecast = await ForecastService().loadOrCreateForecast(context, date);
     forecast = await forecastDao.findWithTransactionsValue(forecast.id);
 
     setState(() {

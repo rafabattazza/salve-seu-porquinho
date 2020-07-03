@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'package:salveSeuPorquinho/services/category_service.dart';
 import 'package:sqflite/sqflite.dart';
 
-abstract class RootDAO {
+import 'forecast_service.dart';
+
+class DataBaseService {
   Database _database;
 
   Future<Database> get database async {
@@ -71,5 +74,15 @@ abstract class RootDAO {
         }
       },
     );
+  }
+
+  startDb() async {
+    final db = await DataBaseService().database;
+    int count = Sqflite.firstIntValue(
+        await db.rawQuery("SELECT COUNT(*) FROM Category"));
+    if (count == 0) {
+      await CategoryService().createDefaultCategory();
+      await ForecastService().createDefaultForecast();
+    }
   }
 }

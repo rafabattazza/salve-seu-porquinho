@@ -1,10 +1,11 @@
 import 'package:salveSeuPorquinho/models/transac_model.dart';
 import 'package:salveSeuPorquinho/screens/dashboard/entries/filter_dto.dart';
-import 'package:salveSeuPorquinho/services/database/root_dao.dart';
 
-class TransacDAO extends RootDAO {
+import 'database_service.dart';
+
+class TransacService {
   Future<List<TransacModel>> findByFilter(final FilterDto filter) async {
-    final db = await database;
+    final db = await DataBaseService().database;
     List<Map<String, dynamic>> res = await db.rawQuery(
         " SELECT *"
                 " FROM Transac "
@@ -22,7 +23,7 @@ class TransacDAO extends RootDAO {
   }
 
   Future<String> findLastDescr(final int wrapperId) async {
-    final db = await database;
+    final db = await DataBaseService().database;
     List<Map<String, dynamic>> res = await db.rawQuery(
         " SELECT tra_descr"
                 " FROM Transac "
@@ -34,7 +35,7 @@ class TransacDAO extends RootDAO {
   }
 
   persist(TransacModel transaction) async {
-    final db = await database;
+    final db = await DataBaseService().database;
     if (transaction.id != null) {
       await db.update("Transac", transaction.toMap(),
           where: "tra_id = ?", whereArgs: [transaction.id]);
@@ -45,7 +46,7 @@ class TransacDAO extends RootDAO {
   }
 
   delete(int tra_id) async {
-    final db = await database;
+    final db = await DataBaseService().database;
     db.delete(
       "transac",
       where: "tra_id = ?",

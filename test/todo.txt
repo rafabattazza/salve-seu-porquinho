@@ -1,12 +1,11 @@
 - Formulario para criação de lançamento (form_entry.dart) precisa colocar um DatePicker no data e um timePicker no time para permitir ao usuário alterar a Data de Hora do lançamento
 
-- Converter DAO em Store ou Service e remover o Business
-
 - DASHBOARD - Question Message no SAIR
 
 - Relatórios
   - Despess médias por envelope/categoria por 1/3/6/12 últimos meses
   - 
+  
 - Revisar o botão voltar
 
 - Tratamento global de erros
@@ -17,6 +16,7 @@
 - Estudar animações de transição, principalmente ao trocar de tela no Dashboard clicando no Footer
   Seria bom que a troca de uma tela para outra fosse feita através de um slider ou algo assim
 
+- Implementar os Testes Unitários de todas as Screeens
 
 
 //Futuro

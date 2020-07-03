@@ -7,9 +7,8 @@ import 'package:salveSeuPorquinho/components/object_array.dart';
 import 'package:salveSeuPorquinho/models/category_model.dart';
 import 'package:salveSeuPorquinho/models/forecast_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
-import 'package:salveSeuPorquinho/services/business/forecast_business.dart';
-import 'package:salveSeuPorquinho/services/database/forecast_dao.dart';
-import 'package:salveSeuPorquinho/services/database/wrapper_dao.dart';
+import 'package:salveSeuPorquinho/services/forecast_service.dart';
+import 'package:salveSeuPorquinho/services/wrapper_service.dart';
 import 'package:salveSeuPorquinho/utils/theme_utils.dart';
 import 'package:salveSeuPorquinho/utils/utils.dart';
 import 'package:salveSeuPorquinho/utils/validation_utils.dart';
@@ -40,7 +39,7 @@ class _FormForecastState extends State<FormForecast> {
   static const String _BUTTON_CANCELAR_TEXT = "Cancelar";
 
   TextEditingController _invoiceController = new TextEditingController();
-  final ForecastDAO _forecastDao = ForecastDAO();
+  final ForecastService _forecastDao = ForecastService();
 
   ForecastModel _forecast;
   @override
@@ -216,7 +215,7 @@ class _FormForecastState extends State<FormForecast> {
   }
 
   void _editWrapper(WrapperModel wrapper, CategoryModel category) {
-    final WrapperDAO wrapperDao = WrapperDAO();
+    final WrapperService wrapperDao = WrapperService();
     TextEditingController _nameController =
         new TextEditingController(text: wrapper?.name);
     TextEditingController _budgetController = new TextEditingController(
@@ -312,7 +311,7 @@ class _FormForecastState extends State<FormForecast> {
 
   _loadOrCreatePrevision(DateTime date) async {
     var _forecastLocal =
-        await ForecastBusiness.loadOrCreateForecast(context, date);
+        await ForecastService().loadOrCreateForecast(context, date);
     setState(() {
       this._invoiceController.text =
           Utils.numberFormat.format(_forecastLocal.invoice);
@@ -321,7 +320,7 @@ class _FormForecastState extends State<FormForecast> {
   }
 
   Future<void> refresh() async {
-    final WrapperDAO wrapperDao = WrapperDAO();
+    final WrapperService wrapperDao = WrapperService();
     List<CategoryModel> categories =
         await wrapperDao.findByForecastGroupedByCategory(_forecast.id);
     setState(() {
@@ -337,7 +336,7 @@ class _FormForecastState extends State<FormForecast> {
         actions: <Widget>[
           FlatButton(
             onPressed: () async {
-              WrapperDAO _wrapperDao = WrapperDAO();
+              WrapperService _wrapperDao = WrapperService();
               await _wrapperDao.delete(wrapper);
               await this.refresh();
               Navigator.of(context).pop();

@@ -1,10 +1,10 @@
 import 'package:salveSeuPorquinho/models/category_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
-import 'package:salveSeuPorquinho/services/database/root_dao.dart';
+import 'database_service.dart';
 
-class WrapperDAO extends RootDAO {
+class WrapperService {
   Future<List<WrapperModel>> findByForecast(final int forecastId) async {
-    final db = await database;
+    final db = await DataBaseService().database;
     List<Map<String, dynamic>> res = await db.rawQuery(
         " SELECT *"
         " FROM Wrapper "
@@ -18,7 +18,7 @@ class WrapperDAO extends RootDAO {
 
   Future<List<CategoryModel>> findByForecastGroupedByCategory(
       final int forecastId) async {
-    final db = await database;
+    final db = await DataBaseService().database;
 
     List<Map<String, dynamic>> resCategory = await db.rawQuery(" SELECT *"
         " FROM Category "
@@ -50,7 +50,7 @@ class WrapperDAO extends RootDAO {
   }
 
   persist(WrapperModel wrapper) async {
-    final db = await database;
+    final db = await DataBaseService().database;
     if (wrapper.id != null) {
       await db.update("Wrapper", wrapper.toMap(),
           where: "wra_id = ?", whereArgs: [wrapper.id]);
@@ -61,12 +61,12 @@ class WrapperDAO extends RootDAO {
   }
 
   delete(WrapperModel wrapper) async {
-    final db = await database;
+    final db = await DataBaseService().database;
     await db.delete("Wrapper", where: "wra_id = ?", whereArgs: [wrapper.id]);
   }
 
   duplicateForecast(int lastForecastId, int nextForecastId) async {
-    final db = await database;
+    final db = await DataBaseService().database;
     await db.execute(
         " INSERT INTO Wrapper (wra_forecast, wra_category, wra_name, wra_budget)"
         " SELECT ?, wra_category, wra_name, wra_budget "

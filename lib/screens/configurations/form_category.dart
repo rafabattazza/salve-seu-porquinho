@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:salveSeuPorquinho/components/async_builder.dart';
 import 'package:salveSeuPorquinho/models/category_model.dart';
-import 'package:salveSeuPorquinho/services/database/category_dao.dart';
+import 'package:salveSeuPorquinho/services/category_service.dart';
 import 'package:salveSeuPorquinho/utils/theme_utils.dart';
 import 'package:salveSeuPorquinho/utils/validation_utils.dart';
 
@@ -28,11 +28,12 @@ class _FormCategoriesState extends State<FormCategories> {
 
   static const String _NAME_TEXT = "Nome da categoria";
   static const String _PERCENT_TEXT = "Precentual %";
-  static const String _PERCENT_VALIDATION = "Atenção a soma dos percentuais deve ser igual 100%. Sua soma está em {1}% você deve {2}%";
+  static const String _PERCENT_VALIDATION =
+      "Atenção a soma dos percentuais deve ser igual 100%. Sua soma está em {1}% você deve {2}%";
   static const String _DELETED_TEXT = "Categoria excluída!";
   static const String _CORRECT_TEXT_BUTTON = "Corrigir Automaticamente";
 
-  final CategoryDAO _categoryDao = new CategoryDAO();
+  final CategoryService _categoryDao = new CategoryService();
 
   CategoryModel _record;
   int _percentTotal = 0;
@@ -146,7 +147,8 @@ class _FormCategoriesState extends State<FormCategories> {
                   TextFormField(
                     keyboardType: TextInputType.number,
                     controller: _percentController,
-                    decoration: ThemeUtils.inputDecoration.copyWith(labelText: _PERCENT_TEXT),
+                    decoration: ThemeUtils.inputDecoration
+                        .copyWith(labelText: _PERCENT_TEXT),
                     validator: REQUIRED,
                     inputFormatters: <TextInputFormatter>[
                       WhitelistingTextInputFormatter.digitsOnly
