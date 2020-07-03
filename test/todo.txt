@@ -21,6 +21,7 @@
 
 - Implementar os Testes Unitários de todas as Screeens
 
+- Criar Telas de boas vindas explicando o funcionamento de cada Screen no primeiro acesso
 
 //Futuro
 - Integração com o GoogleDriver permitindo acesso aos dados de vários celulares
