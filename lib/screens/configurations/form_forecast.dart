@@ -122,10 +122,16 @@ class _FormForecastState extends State<FormForecast> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Container(
+                Expanded(
                   child: Text("${category.name} (${category.percent}%)"),
-                  width: MediaQuery.of(context).size.width - 200,
                 ),
+                IconButton(
+                  icon: Icon(
+                    Icons.add,
+                    size: 36,
+                  ),
+                  onPressed: () => _editWrapper(null, category),
+                )
               ],
             ),
             Divider(
