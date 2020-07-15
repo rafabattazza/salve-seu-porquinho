@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:salveSeuPorquinho/components/InputFormatters/decimal-text-input-formatter.dart';
 import 'package:salveSeuPorquinho/models/transac_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
 import 'package:salveSeuPorquinho/services/transac_service.dart';
@@ -95,15 +96,13 @@ class _FormEntryState extends State<FormEntry> {
                       validator: REQUIRED,
                     ),
                     TextFormField(
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                       controller: _valueController,
                       decoration: new InputDecoration(
                           labelText: _VALUE_TEXT,
                           prefixIcon: Icon(Icons.monetization_on)),
                       validator: REQUIRED,
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
+                      inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
                     ),
                     TextFormField(
                       controller: _descrController,
