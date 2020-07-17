@@ -1,7 +1,3 @@
-- O campo double do formulario de lançamento não está aceitando valores decimais no Celular configurado commo PT-BR
-
-- Formulario para criação de lançamento (form_entry.dart) precisa colocar um DatePicker no data e um 
-  timePicker no time para permitir ao usuário alterar a Data de Hora do lançamento
 
 - Relatórios
   - Despess médias por envelope/categoria por 1/3/6/12 últimos meses
