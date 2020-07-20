@@ -37,7 +37,7 @@ class _ResumeScreenState extends State<ResumeScreen> {
       child: Column(
         children: <Widget>[
           Container(
-            height: 230,
+            height: 235,
             child: Stack(
               alignment: AlignmentDirectional.bottomCenter,
               children: <Widget>[

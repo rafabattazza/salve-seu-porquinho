@@ -26,7 +26,7 @@ class Header extends StatelessWidget {
       children: <Widget>[
         Container(
           width: double.maxFinite,
-          height: 128,
+          height: 130,
           decoration: BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.topLeft,

@@ -13,7 +13,7 @@ class CrudHeaderButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.maxFinite,
-      height: 133,
+      height: 134,
       decoration: BoxDecoration(
         gradient: LinearGradient(
             begin: Alignment.topLeft,
