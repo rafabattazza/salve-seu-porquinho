@@ -204,8 +204,10 @@ class _FormEntryState extends State<FormEntry> {
     this._transac.wrapper = WrapperModel.id(this._wrapperId);
     this._transac.descr = this._descrController.text;
     this._transac.value = Utils.numberFormat.parse(this._valueController.text);    
-    this._transac.date = this._transac.date ?? 
-        new DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedTime.hour, _selectedTime.minute);
+    this._transac.date = new DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedTime.hour, _selectedTime.minute);
+
+    print(this._transac.date);
+
 
     print(this._transac.toMap());
     transacService.persist(this._transac);
