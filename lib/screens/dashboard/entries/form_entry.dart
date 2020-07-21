@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:salveSeuPorquinho/components/InputFormatters/decimal-text-input-formatter.dart';
 import 'package:salveSeuPorquinho/models/transac_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
 import 'package:salveSeuPorquinho/services/transac_service.dart';
@@ -39,6 +40,9 @@ class _FormEntryState extends State<FormEntry> {
 
   TransacModel _transac;
   _FormEntryState(this._transac);
+
+  TimeOfDay _selectedTime = TimeOfDay.fromDateTime(DateTime.now());
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -95,15 +99,13 @@ class _FormEntryState extends State<FormEntry> {
                       validator: REQUIRED,
                     ),
                     TextFormField(
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                       controller: _valueController,
                       decoration: new InputDecoration(
                           labelText: _VALUE_TEXT,
                           prefixIcon: Icon(Icons.monetization_on)),
                       validator: REQUIRED,
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
+                      inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
                     ),
                     TextFormField(
                       controller: _descrController,
@@ -121,6 +123,7 @@ class _FormEntryState extends State<FormEntry> {
                               labelText: _DATE_TEXT,
                               prefixIcon: Icon(Icons.calendar_today),
                             ),
+                            onTap: () => _pickDate(context),
                           ),
                         ),
                         Padding(padding: EdgeInsets.only(left: 4, right: 4)),
@@ -132,6 +135,7 @@ class _FormEntryState extends State<FormEntry> {
                               labelText: _TIME_TEXT,
                               prefixIcon: Icon(Icons.access_time),
                             ),
+                            onTap: () => _pickTime(context),
                           ),
                         ),
                       ],
@@ -199,13 +203,52 @@ class _FormEntryState extends State<FormEntry> {
 
     this._transac.wrapper = WrapperModel.id(this._wrapperId);
     this._transac.descr = this._descrController.text;
-    this._transac.value = Utils.numberFormat.parse(this._valueController.text);
-    this._transac.date = this._transac.date ??
-        DateTime.now(); // TODO implementar o date/timer pick
+    this._transac.value = Utils.numberFormat.parse(this._valueController.text);    
+    this._transac.date = new DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedTime.hour, _selectedTime.minute);
+
+    print(this._transac.date);
+
 
     print(this._transac.toMap());
     transacService.persist(this._transac);
 
     Navigator.pop(context, true);
+  }
+
+  _pickDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: new DateTime(2020, 1),
+      lastDate: new DateTime(2050, 12),
+    );
+
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        _dataController.text = new DateFormat("dd/MM/yyyy").format(picked);
+      });
+    }
+  }
+
+  _pickTime(BuildContext context) async {
+    final picked = await showTimePicker(
+      context: context, 
+      initialTime: _selectedTime,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child,
+        );
+      },
+    );
+
+    if (picked != null && picked != _selectedTime) {
+      final dtNow = new DateTime.now();
+      setState(() {
+        _selectedTime = picked;
+        _timeController.text = new DateFormat("HH:mm").format(new DateTime(dtNow.year, dtNow.month, dtNow.day, picked.hour, picked.minute));
+      });
+    }
   }
 }
