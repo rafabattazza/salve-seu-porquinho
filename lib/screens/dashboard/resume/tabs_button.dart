@@ -37,7 +37,7 @@ class TabsButton extends StatelessWidget {
     return InkWell(
       child: Container(
         width: 107,
-        height: 61,
+        height: 63,
         decoration: BoxDecoration(
           color: Color(0xFF12121A),
           border: selected

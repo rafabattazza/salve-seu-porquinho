@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:salveSeuPorquinho/components/question_dialog.dart';
 import 'package:salveSeuPorquinho/screens/welcome.dart';
 import 'package:salveSeuPorquinho/utils/theme_utils.dart';
 
@@ -8,6 +9,7 @@ class DashboardFooter extends StatelessWidget {
   static const _VALUES_TEXT = "Lançamentos";
   static const _REPORTS_TEXT = "Relatórios";
   static const _EXIT_TEXT = "Sair";
+  static const _EXIT_MESSAGE = "Deseja realmente sair?";
 
   final int selectedTab;
   final Function(int) onSelectedTab;
@@ -69,11 +71,13 @@ class DashboardFooter extends StatelessWidget {
     );
   }
 
-  _onButtonTap(index, context) {
+  _onButtonTap(index, context) async {
     if (index == 3) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) {
-        return WelcomeScreen();
-      }));
+      if (await QuestionDialog.showQuestion(context, _EXIT_MESSAGE)) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) {
+          return WelcomeScreen();
+        }));
+      }
     } else {
       if (index != selectedTab) {
         onSelectedTab(index);
