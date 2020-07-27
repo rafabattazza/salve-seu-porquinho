@@ -16,23 +16,30 @@ class _ConfigurationsState extends State<Configurations> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(_headerText),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          CrudHeaderButtons(_selectedTab, _handleTabSelected),
-          Expanded(
-            child: SingleChildScrollView(
-              child: CrudBody(_selectedTab),
-            ),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: Text(_headerText),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-        ],
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            CrudHeaderButtons(_selectedTab, _handleTabSelected),
+            Expanded(
+              child: SingleChildScrollView(
+                child: CrudBody(_selectedTab),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
