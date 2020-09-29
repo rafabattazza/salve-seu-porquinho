@@ -1,8 +1,6 @@
 - Relatórios
   - Despess médias por envelope/categoria por 1/3/6/12 últimos meses
   - 
-  
-- Revisar o botão android voltar para desabilitar em alguns lugares
 
 - Tratamento global de erros
 
