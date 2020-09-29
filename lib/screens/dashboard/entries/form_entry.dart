@@ -63,87 +63,94 @@ class _FormEntryState extends State<FormEntry> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_HEADER_TEXT),
-        backgroundColor: Colors.transparent,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF5D57EA), Color(0xFF9647DB)]),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_HEADER_TEXT),
+          backgroundColor: Colors.transparent,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF5D57EA), Color(0xFF9647DB)]),
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(onPressed: _save, child: Icon(Icons.save))
+          ],
+          elevation: 0,
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        actions: <Widget>[
-          FlatButton(onPressed: _save, child: Icon(Icons.save))
-        ],
-        elevation: 0,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(8),
-        child: SingleChildScrollView(
-          child: Wrap(
-            runSpacing: 20,
-            children: <Widget>[
-              Form(
-                key: _formKey,
-                child: Wrap(
-                  runSpacing: 20,
-                  children: <Widget>[
-                    DropdownButtonFormField<int>(
-                      items: _getWrapperMenuItens(),
-                      value: _wrapperId,
-                      onChanged: (wId) => _wrapperIdChange(wId),
-                      decoration: new InputDecoration(labelText: _WRAPPER_TEXT),
-                      validator: REQUIRED,
-                    ),
-                    TextFormField(
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
-                      controller: _valueController,
-                      decoration: new InputDecoration(
-                          labelText: _VALUE_TEXT,
-                          prefixIcon: Icon(Icons.monetization_on)),
-                      validator: REQUIRED,
-                      inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
-                    ),
-                    TextFormField(
-                      controller: _descrController,
-                      decoration: new InputDecoration(labelText: _DESCR_TEXT),
-                      validator: REQUIRED,
-                      maxLines: 2,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            readOnly: true,
-                            controller: _dataController,
-                            decoration: new InputDecoration(
-                              labelText: _DATE_TEXT,
-                              prefixIcon: Icon(Icons.calendar_today),
+        body: Container(
+          padding: EdgeInsets.all(8),
+          child: SingleChildScrollView(
+            child: Wrap(
+              runSpacing: 20,
+              children: <Widget>[
+                Form(
+                  key: _formKey,
+                  child: Wrap(
+                    runSpacing: 20,
+                    children: <Widget>[
+                      DropdownButtonFormField<int>(
+                        items: _getWrapperMenuItens(),
+                        value: _wrapperId,
+                        onChanged: (wId) => _wrapperIdChange(wId),
+                        decoration: new InputDecoration(labelText: _WRAPPER_TEXT),
+                        validator: REQUIRED,
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        controller: _valueController,
+                        decoration: new InputDecoration(
+                            labelText: _VALUE_TEXT,
+                            prefixIcon: Icon(Icons.monetization_on)),
+                        validator: REQUIRED,
+                        inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
+                      ),
+                      TextFormField(
+                        controller: _descrController,
+                        decoration: new InputDecoration(labelText: _DESCR_TEXT),
+                        validator: REQUIRED,
+                        maxLines: 2,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              readOnly: true,
+                              controller: _dataController,
+                              decoration: new InputDecoration(
+                                labelText: _DATE_TEXT,
+                                prefixIcon: Icon(Icons.calendar_today),
+                              ),
+                              onTap: () => _pickDate(context),
                             ),
-                            onTap: () => _pickDate(context),
                           ),
-                        ),
-                        Padding(padding: EdgeInsets.only(left: 4, right: 4)),
-                        Expanded(
-                          child: TextFormField(
-                            readOnly: true,
-                            controller: _timeController,
-                            decoration: new InputDecoration(
-                              labelText: _TIME_TEXT,
-                              prefixIcon: Icon(Icons.access_time),
+                          Padding(padding: EdgeInsets.only(left: 4, right: 4)),
+                          Expanded(
+                            child: TextFormField(
+                              readOnly: true,
+                              controller: _timeController,
+                              decoration: new InputDecoration(
+                                labelText: _TIME_TEXT,
+                                prefixIcon: Icon(Icons.access_time),
+                              ),
+                              onTap: () => _pickTime(context),
                             ),
-                            onTap: () => _pickTime(context),
                           ),
-                        ),
-                      ],
-                    )
-                  ],
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
