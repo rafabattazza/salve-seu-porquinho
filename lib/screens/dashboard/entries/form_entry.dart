@@ -34,8 +34,6 @@ class _FormEntryState extends State<FormEntry> {
   static const String _DATE_TEXT = "Dia";
   static const String _TIME_TEXT = "Hora";
 
-  static const String _SAVE_TEXT_BUTTON = "Salvar";
-
   TransacService transacService = TransacService();
 
   TransacModel _transac;
@@ -99,13 +97,16 @@ class _FormEntryState extends State<FormEntry> {
                       validator: REQUIRED,
                     ),
                     TextFormField(
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
                       controller: _valueController,
                       decoration: new InputDecoration(
                           labelText: _VALUE_TEXT,
                           prefixIcon: Icon(Icons.monetization_on)),
                       validator: REQUIRED,
-                      inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
+                      inputFormatters: [
+                        DecimalTextInputFormatter(decimalRange: 2)
+                      ],
                     ),
                     TextFormField(
                       controller: _descrController,
@@ -203,11 +204,11 @@ class _FormEntryState extends State<FormEntry> {
 
     this._transac.wrapper = WrapperModel.id(this._wrapperId);
     this._transac.descr = this._descrController.text;
-    this._transac.value = Utils.numberFormat.parse(this._valueController.text);    
-    this._transac.date = new DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedTime.hour, _selectedTime.minute);
+    this._transac.value = Utils.numberFormat.parse(this._valueController.text);
+    this._transac.date = new DateTime(_selectedDate.year, _selectedDate.month,
+        _selectedDate.day, _selectedTime.hour, _selectedTime.minute);
 
     print(this._transac.date);
-
 
     print(this._transac.toMap());
     transacService.persist(this._transac);
@@ -233,7 +234,7 @@ class _FormEntryState extends State<FormEntry> {
 
   _pickTime(BuildContext context) async {
     final picked = await showTimePicker(
-      context: context, 
+      context: context,
       initialTime: _selectedTime,
       builder: (context, child) {
         return MediaQuery(
@@ -247,7 +248,8 @@ class _FormEntryState extends State<FormEntry> {
       final dtNow = new DateTime.now();
       setState(() {
         _selectedTime = picked;
-        _timeController.text = new DateFormat("HH:mm").format(new DateTime(dtNow.year, dtNow.month, dtNow.day, picked.hour, picked.minute));
+        _timeController.text = new DateFormat("HH:mm").format(new DateTime(
+            dtNow.year, dtNow.month, dtNow.day, picked.hour, picked.minute));
       });
     }
   }
