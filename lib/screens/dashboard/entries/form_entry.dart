@@ -7,6 +7,7 @@ import 'package:salveSeuPorquinho/models/transac_model.dart';
 import 'package:salveSeuPorquinho/models/wrapper_model.dart';
 import 'package:salveSeuPorquinho/services/transac_service.dart';
 import 'package:salveSeuPorquinho/services/wrapper_service.dart';
+import 'package:salveSeuPorquinho/utils/theme_utils.dart';
 import 'package:salveSeuPorquinho/utils/utils.dart';
 import 'package:salveSeuPorquinho/utils/validation_utils.dart';
 
@@ -34,6 +35,9 @@ class _FormEntryState extends State<FormEntry> {
   static const String _DATE_TEXT = "Dia";
   static const String _TIME_TEXT = "Hora";
 
+  static const String _INSTALLMENTS_OPTION_TEXT = "Forma de parcelamento";
+  static const String _INSTALLMENT_TEXT = "Quantidade de parcelas";
+
   TransacService transacService = TransacService();
 
   TransacModel _transac;
@@ -51,6 +55,7 @@ class _FormEntryState extends State<FormEntry> {
   }
 
   int _wrapperId;
+  int _installmentOption = 1;
   List<WrapperModel> _wrappers;
 
   final _formKey = GlobalKey<FormState>();
@@ -58,6 +63,7 @@ class _FormEntryState extends State<FormEntry> {
   final TextEditingController _valueController = new TextEditingController();
   final TextEditingController _dataController = new TextEditingController();
   final TextEditingController _timeController = new TextEditingController();
+  final TextEditingController _subdivisionController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +142,30 @@ class _FormEntryState extends State<FormEntry> {
                             ),
                           ),
                         ],
-                      )
+                      ),
+                      if (this._transac.id == null)
+                        Column(
+                          children: [
+                            Text(
+                              "Parcelamento",
+                              style: ThemeUtils.bigText,
+                            ),
+                            DropdownButtonFormField<int>(
+                              items: _getSubdivisionOptions(),
+                              value: _installmentOption,
+                              onChanged: (option) => _subdivisionOptionChange(option),
+                              decoration: new InputDecoration(labelText: _INSTALLMENTS_OPTION_TEXT),
+                            ),
+                            new TextFormField(
+                              keyboardType: TextInputType.numberWithOptions(decimal: false),
+                              maxLines: 1,
+                              decoration: new InputDecoration(
+                                labelText: _INSTALLMENT_TEXT,
+                              ),
+                              controller: _subdivisionController,
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
@@ -160,6 +189,13 @@ class _FormEntryState extends State<FormEntry> {
     return res;
   }
 
+  List<DropdownMenuItem<int>> _getSubdivisionOptions() {
+    return [
+      new DropdownMenuItem(value: 1, child: Text("Dividir o valor acima entre as parcelas")),
+      new DropdownMenuItem(value: 2, child: Text("Utilizar o valor acima em cada parcela")),
+    ];
+  }
+
   _wrapperIdChange(int _wrapperId) async {
     if (_wrapperId == null) return;
     String _lastDescr = "";
@@ -168,6 +204,13 @@ class _FormEntryState extends State<FormEntry> {
     setState(() {
       this._wrapperId = _wrapperId;
       this._descrController.text = _lastDescr;
+    });
+  }
+
+  _subdivisionOptionChange(int opt) async {
+    if (opt == null) return;
+    setState(() {
+      this._installmentOption = opt;
     });
   }
 
@@ -199,10 +242,8 @@ class _FormEntryState extends State<FormEntry> {
     this._transac.value = Utils.numberFormat.parse(this._valueController.text);
     this._transac.date = new DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedTime.hour, _selectedTime.minute);
 
-    print(this._transac.date);
-
-    print(this._transac.toMap());
-    transacService.persist(this._transac);
+    final num _installmentCount = this._subdivisionController.text.length > 0 ? Utils.numberFormat.parse(this._subdivisionController.text) : 0;
+    transacService.persist(this._transac, _installmentCount.toInt(), this._installmentOption);
 
     Navigator.pop(context, true);
   }

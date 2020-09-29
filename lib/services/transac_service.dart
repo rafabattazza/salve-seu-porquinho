@@ -34,14 +34,56 @@ class TransacService {
     return res.isEmpty ? null : res[0]['tra_descr'];
   }
 
-  persist(TransacModel transaction) async {
+  persist(final TransacModel transaction, final int installmentCount, final int installmentOption) async {
     final db = await DbService.db;
     if (transaction.id != null) {
-      await db.update("Transac", transaction.toMap(),
-          where: "tra_id = ?", whereArgs: [transaction.id]);
+      await db.update("Transac", transaction.toMap(), where: "tra_id = ?", whereArgs: [transaction.id]);
     } else {
-      int insertedId = await db.insert("Transac", transaction.toMap());
-      transaction.id = insertedId;
+      if (installmentCount > 0 && installmentOption > 0) {
+        if (installmentOption == 1) {
+          await createInstallmenteByDivide(transaction, installmentCount);
+        } else {
+          await createInstallmenteByMultiply(transaction, installmentCount);
+        }
+      } else {
+        int insertedId = await db.insert("Transac", transaction.toMap());
+        transaction.id = insertedId;
+      }
+    }
+  }
+
+  createInstallmenteByDivide(final TransacModel transaction, final int installmentCount) async {
+    final db = await DbService.db;
+    double installmentValue = double.parse((transaction.value / installmentCount).toStringAsFixed(2));
+    double dif = double.parse((transaction.value - (installmentValue * installmentCount)).toStringAsFixed(2));
+    DateTime data = transaction.date;
+
+    for (int i = 0; i < installmentCount; i++) {
+      TransacModel installment = new TransacModel(
+        date: data,
+        descr: transaction.descr + " Parc: " + (i + 1).toString() + "/" + installmentCount.toString(),
+        value: i == 0 ? installmentValue + dif : installmentValue,
+        wrapper: transaction.wrapper,
+      );
+      await db.insert("Transac", installment.toMap());
+
+      data = new DateTime(data.year, data.month + 1, data.day);
+    }
+  }
+
+  createInstallmenteByMultiply(final TransacModel transaction, final int installmentCount) async {
+    final db = await DbService.db;
+    DateTime data = transaction.date;
+    for (int i = 0; i < installmentCount; i++) {
+      TransacModel installment = new TransacModel(
+        date: data,
+        descr: transaction.descr + " Parc: " + (i + 1).toString() + "/" + installmentCount.toString(),
+        value: transaction.value,
+        wrapper: transaction.wrapper,
+      );
+      await db.insert("Transac", installment.toMap());
+
+      data = new DateTime(data.year, data.month + 1, data.day);
     }
   }
 
