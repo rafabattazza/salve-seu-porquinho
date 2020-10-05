@@ -56,7 +56,17 @@ class _EntriesScreenState extends State<EntriesScreen> {
               ),
             ),
           if (_transactions.isNotEmpty)
-            ...ObjectArray(_transactions, _buildTransactionLine).getObjects(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: ObjectArray(_transactions, _buildTransactionLine).getObjects(),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -65,14 +75,12 @@ class _EntriesScreenState extends State<EntriesScreen> {
   DateTime lastDate;
   Widget _buildTransactionLine(TransacModel transacion, int index) {
     List<Widget> ws = [];
-    if (Utils.dateFormat.format(transacion.date) !=
-            Utils.dateFormat.format(lastDate ?? DateTime.now()) ||
-        index == 0) {
+    if (Utils.dateFormat.format(transacion.dtDue) != Utils.dateFormat.format(lastDate ?? DateTime.now()) || index == 0) {
       ws.add(Padding(
         padding: const EdgeInsets.only(top: 16.0, left: 8),
-        child: Text(new DateFormat("EEE - dd/MM").format(transacion.date)),
+        child: Text(new DateFormat("EEE - dd/MM").format(transacion.dtDue)),
       ));
-      lastDate = transacion.date;
+      lastDate = transacion.dtDue;
     }
 
     ws.add(
@@ -100,9 +108,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Text(transacion.wrapper.name),
-                          Text(transacion.descr,
-                              style:
-                                  ThemeUtils.thinText.copyWith(fontSize: 12)),
+                          Text(transacion.descr, style: ThemeUtils.thinText.copyWith(fontSize: 12)),
                         ],
                       ),
                     ),
@@ -112,8 +118,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
                       children: <Widget>[
                         Text(
                           "\$ ${Utils.numberFormat.format(transacion.value)}",
-                          style:
-                              ThemeUtils.strongText.copyWith(color: Colors.red),
+                          style: ThemeUtils.strongText.copyWith(color: Colors.red),
                         ),
                         Row(
                           children: <Widget>[
@@ -122,7 +127,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
                               size: 16,
                             ),
                             Padding(padding: EdgeInsets.only(left: 4)),
-                            Text(Utils.timeFormat.format(transacion.date)),
+                            Text(Utils.timeFormat.format(transacion.dtDue)),
                           ],
                         ),
                       ],
@@ -168,22 +173,18 @@ class _EntriesScreenState extends State<EntriesScreen> {
   }
 
   _mniMoreOptions(String opt, TransacModel transac) async {
-    if ((await QuestionDialog.showQuestion(
-        context, _DELETE_MESSAGE.replaceAll("{}", transac.descr)))) {
+    if ((await QuestionDialog.showQuestion(context, _DELETE_MESSAGE.replaceAll("{}", transac.descr)))) {
       await transacService.delete(transac.id);
       await _loadData(_filter);
     }
   }
 
   _loadData(FilterDto _filter) async {
-    ForecastModel _forecast = await ForecastService()
-        .loadOrCreateForecast(context, _filter.monthYear);
+    ForecastModel _forecast = await ForecastService().loadOrCreateForecast(context, _filter.monthYear);
 
-    List<WrapperModel> _wrappers =
-        await wrapperService.findByForecast(_forecast.id);
+    List<WrapperModel> _wrappers = await wrapperService.findByForecast(_forecast.id);
 
-    List<TransacModel> _transactions =
-        await transacService.findByFilter(_filter);
+    List<TransacModel> _transactions = await transacService.findByFilter(_filter);
 
     setState(() {
       this._wrappers = _wrappers;

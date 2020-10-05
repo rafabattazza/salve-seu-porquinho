@@ -13,8 +13,7 @@ class ForecastService {
     DateTime date,
   ) async {
     final ForecastService _forecastService = ForecastService();
-    ForecastModel _forecast =
-        await _forecastService.findByMonthAndYear(date.month, date.year);
+    ForecastModel _forecast = await _forecastService.findByMonthAndYear(date.month, date.year);
 
     if (_forecast == null) {
       _forecast = await _forecastService.findLast();
@@ -23,62 +22,45 @@ class ForecastService {
     return _forecast;
   }
 
-  Future<ForecastModel> loadOrCreateForecast(
-    BuildContext context,
-    DateTime date,
-  ) async {
+  Future<ForecastModel> loadOrCreateForecast(BuildContext context, DateTime date, [bool showMsg = true]) async {
     final ForecastService _forecastService = ForecastService();
     final WrapperService _wrapperService = WrapperService();
 
-    ForecastModel _forecast =
-        await _forecastService.findByMonthAndYear(date.month, date.year);
+    ForecastModel _forecast = await _forecastService.findByMonthAndYear(date.month, date.year);
     if (_forecast == null) {
       _forecast = await _forecastService.findLast();
       if (_forecast != null) {
-        _forecast = await _copyForecast(
-            context, _forecast, date, _forecastService, _wrapperService);
+        _forecast = await _copyForecast(context, _forecast, date, _forecastService, _wrapperService);
       }
     }
 
     if (_forecast == null) {
       await _forecastService.createDefaultForecast();
-      _forecast =
-          await _forecastService.findByMonthAndYear(date.month, date.year);
+      _forecast = await _forecastService.findByMonthAndYear(date.month, date.year);
     }
 
-    List<CategoryModel> _categories =
-        await _wrapperService.findByForecastGroupedByCategory(_forecast.id);
+    List<CategoryModel> _categories = await _wrapperService.findByForecastGroupedByCategory(_forecast.id);
 
     _forecast.categories = _categories;
 
     return _forecast;
   }
 
-  Future<ForecastModel> _copyForecast(
-    BuildContext context,
-    ForecastModel _forecast,
-    DateTime date,
-    ForecastService _forecastService,
-    WrapperService _wrapperService,
-  ) async {
+  Future<ForecastModel> _copyForecast(BuildContext context, ForecastModel _forecast, DateTime date, ForecastService _forecastService, WrapperService _wrapperService, [bool showMsg = true]) async {
     DateFormat dateFormat = new DateFormat("MM/yyyy");
     //Creating from the last forecast
     int lastId = _forecast.id;
-    DateTime lastDate = DateTime.parse(
-        "${_forecast.year.toString().padLeft(4, '0')}${_forecast.month.toString().padLeft(2, '0')}01");
+    DateTime lastDate = DateTime.parse("${_forecast.year.toString().padLeft(4, '0')}${_forecast.month.toString().padLeft(2, '0')}01");
     _forecast.id = null;
     _forecast.month = date.month;
     _forecast.year = date.year;
     await _forecastService.persist(_forecast);
     await _wrapperService.duplicateForecast(lastId, _forecast.id);
 
-    const String _COPY_FORECAST_MSG =
-        "Não foram localizadas previsões para '{1}', por isso o sistema criou novas com base nas previsões de '{2}'.";
-    await InfoDialog.showInfo(
-        context,
-        _COPY_FORECAST_MSG
-            .replaceAll("{1}", dateFormat.format(date))
-            .replaceAll("{2}", dateFormat.format(lastDate)));
+    if (showMsg) {
+      const String _COPY_FORECAST_MSG = "Não foram localizadas previsões para '{1}', por isso o sistema criou novas com base nas previsões de '{2}'.";
+      await InfoDialog.showInfo(context, _COPY_FORECAST_MSG.replaceAll("{1}", dateFormat.format(date)).replaceAll("{2}", dateFormat.format(lastDate)));
+    }
     return _forecast;
   }
 
@@ -122,8 +104,7 @@ class ForecastService {
     final db = await DbService.db;
 
     if (forecast.id != null) {
-      await db.update("Forecast", forecast.toMap(),
-          where: "for_id = ?", whereArgs: [forecast.id]);
+      await db.update("Forecast", forecast.toMap(), where: "for_id = ?", whereArgs: [forecast.id]);
     } else {
       int insertedId = await db.insert("Forecast", forecast.toMap());
       forecast.id = insertedId;
@@ -153,67 +134,23 @@ class ForecastService {
 
   Future<void> createDefaultForecast() async {
     final db = await DbService.db;
-    final int forecastId = await db.insert(
-        "Forecast",
-        ForecastModel.all(
-                null, DateTime.now().month, DateTime.now().year, 2000.0)
-            .toMap());
+    final int forecastId = await db.insert("Forecast", ForecastModel.all(null, DateTime.now().month, DateTime.now().year, 2000.0).toMap());
 
     Batch batch = db.batch();
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(1), "Mercado", 450.0)
-            .toMap());
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(1), "Lazer", 150.0)
-            .toMap());
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(1), "Roupas", 100.0)
-            .toMap());
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(1), "Transporte", 150.0)
-            .toMap());
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(1), "Águla/Luz/Fone/Net", 120.0)
-            .toMap());
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(1), "Moradia", 550.0)
-            .toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(1), "Mercado", 450.0).toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(1), "Lazer", 150.0).toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(1), "Roupas", 100.0).toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(1), "Transporte", 150.0).toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(1), "Águla/Luz/Fone/Net", 120.0).toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(1), "Moradia", 550.0).toMap());
 
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(2), "Curso Inglês", 100.0)
-            .toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(2), "Curso Inglês", 100.0).toMap());
 
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(3), "Compra do carro", 400.0)
-            .toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(3), "Compra do carro", 400.0).toMap());
 
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(4), "Previdência", 200.0)
-            .toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(4), "Previdência", 200.0).toMap());
 
-    batch.insert(
-        "Wrapper",
-        WrapperModel.all(null, ForecastModel.id(forecastId),
-                CategoryModel.id(5), "Despesas Livres", 200.0)
-            .toMap());
+    batch.insert("Wrapper", WrapperModel.all(null, ForecastModel.id(forecastId), CategoryModel.id(5), "Despesas Livres", 200.0).toMap());
     await batch.commit();
   }
 }

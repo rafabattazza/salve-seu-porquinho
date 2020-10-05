@@ -18,12 +18,11 @@ class AsyncBuilder<T> extends FutureBuilder<T> {
             future: _future,
             initialData: _initialValue,
             builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
-              print(snapshot.connectionState);
               switch (snapshot.connectionState) {
                 case ConnectionState.done:
-                  if(snapshot.hasData) {
+                  if (snapshot.hasData) {
                     return _builder(snapshot.data);
-                  } 
+                  }
                   return _buildNoData(_noDataText);
                 case ConnectionState.none:
                   return _buildNoData(_noDataText);
@@ -40,15 +39,15 @@ class AsyncBuilder<T> extends FutureBuilder<T> {
               }
             });
 
-            static Widget _buildNoData(String noDataText){
-              return Padding(
-                padding: const EdgeInsets.only(top: 24.0),
-                child: Center(
-                  child: Text(noDataText,
-                  style: TextStyle(
-                    fontSize: 20
-                  ),),
-                ),
-              );
-            }
+  static Widget _buildNoData(String noDataText) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 24.0),
+      child: Center(
+        child: Text(
+          noDataText,
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
+    );
+  }
 }

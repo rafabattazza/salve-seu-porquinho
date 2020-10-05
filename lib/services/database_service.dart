@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:salveSeuPorquinho/services/category_service.dart';
+import 'package:salveSeuPorquinho/services/methods_service.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'forecast_service.dart';
@@ -54,10 +55,21 @@ class DbService {
               "  tra_wrapper INTEGER NOT NULL,"
               "  tra_descr TEXT NOT NULL,"
               "  tra_value NUMBER NOT NULL,"
-              "  tra_date DATETIME NOT NULL,"
+              "  tra_dt_create DATETIME NOT NULL,"
+              "  tra_dt_due DATETIME NOT NULL,"
+              "  tra_method INTEGER NOT NULL,"
               "  FOREIGN KEY (tra_wrapper) REFERENCES Wrapper (wra_id)"
+              "  FOREIGN KEY (tra_method) REFERENCES Method (met_id)"
+              " );");
+          await db.execute(" CREATE TABLE Method ("
+              "  met_id INTEGER PRIMARY KEY,"
+              "  met_name TEXT NOT NULL,"
+              "  met_type INTEGER NOT NULL,"
+              "  met_best_day INTEGER NOT NULL,"
+              "  met_payment_day INTEGER NOT NULL"
               " );");
         }
+
         print("Ugrade DB $oldVersion-$newVersion");
       },
       onDowngrade: (Database db, int oldVersion, int newVersion) async {
@@ -65,6 +77,7 @@ class DbService {
         if (newVersion == 1) {
           Batch batch = db.batch();
 
+          batch.execute("DROP TABLE IF EXISTS Method;");
           batch.execute("DROP TABLE IF EXISTS Transac;");
           batch.execute("DROP TABLE IF EXISTS Wrapper;");
           batch.execute("DROP TABLE IF EXISTS Forecast;");
@@ -78,11 +91,15 @@ class DbService {
 
   startDb() async {
     final db = await DbService.db;
-    int count = Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT(*) FROM Category"));
+    int count = Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM Category"));
     if (count == 0) {
       await CategoryService().createDefaultCategory();
       await ForecastService().createDefaultForecast();
+    }
+
+    int countMethods = Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM Method"));
+    if (countMethods == 0) {
+      await MethodsService().createDefaultMethods();
     }
   }
 }

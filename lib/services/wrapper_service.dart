@@ -16,8 +16,7 @@ class WrapperService {
     return res.isEmpty ? [] : res.map((e) => WrapperModel.fromMap(e)).toList();
   }
 
-  Future<List<CategoryModel>> findByForecastGroupedByCategory(
-      final int forecastId) async {
+  Future<List<CategoryModel>> findByForecastGroupedByCategory(final int forecastId) async {
     final db = await DbService.db;
 
     List<Map<String, dynamic>> resCategory = await db.rawQuery(" SELECT *"
@@ -52,8 +51,7 @@ class WrapperService {
   persist(WrapperModel wrapper) async {
     final db = await DbService.db;
     if (wrapper.id != null) {
-      await db.update("Wrapper", wrapper.toMap(),
-          where: "wra_id = ?", whereArgs: [wrapper.id]);
+      await db.update("Wrapper", wrapper.toMap(), where: "wra_id = ?", whereArgs: [wrapper.id]);
     } else {
       int insertedId = await db.insert("Wrapper", wrapper.toMap());
       wrapper.id = insertedId;
@@ -73,5 +71,28 @@ class WrapperService {
         " FROM Wrapper"
         " WHERE wra_forecast = ?",
         [nextForecastId, lastForecastId]);
+  }
+
+  Future<WrapperModel> findById(final int wrapperId) async {
+    final db = await DbService.db;
+    List<Map<String, dynamic>> res = await db.rawQuery(
+        " SELECT *"
+        " FROM Wrapper "
+        " WHERE wra_id = ? ",
+        [wrapperId]);
+
+    return res.isEmpty ? null : WrapperModel.fromMap(res[0]);
+  }
+
+  Future<WrapperModel> findWrapperByForecast(final String name, final int forecastId) async {
+    final db = await DbService.db;
+    List<Map<String, dynamic>> res = await db.rawQuery(
+        " SELECT *"
+        " FROM Wrapper "
+        " WHERE wra_forecast = ? "
+        " AND LOWER(wra_name) = ? ",
+        [forecastId, name.toLowerCase()]);
+
+    return res.isEmpty ? null : WrapperModel.fromMap(res[0]);
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CrudHeaderButtons extends StatelessWidget {
   static const FORECAST_TEXT = "Previsões";
   static const CATEGORIES_TEXT = "Categorias";
+  static const PAYMENT_TEXT = "Formas";
 
   final String _selectedTab;
   final Function _navigationHandler;
@@ -16,23 +17,25 @@ class CrudHeaderButtons extends StatelessWidget {
       height: 134,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF5D57EA), Color(0xFF9647DB)]),
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF5D57EA), Color(0xFF9647DB)],
+        ),
       ),
       child: SafeArea(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            NavigationButton(FORECAST_TEXT, Icons.access_time,
-                _selectedTab == FORECAST_TEXT, _handlerClick),
+            NavigationButton(FORECAST_TEXT, Icons.access_time, _selectedTab == FORECAST_TEXT, _handlerClick),
             SizedBox(
               width: 20,
             ),
-
-            NavigationButton(CATEGORIES_TEXT, Icons.format_list_bulleted,
-                _selectedTab == CATEGORIES_TEXT, _handlerClick)
+            NavigationButton(CATEGORIES_TEXT, Icons.format_list_bulleted, _selectedTab == CATEGORIES_TEXT, _handlerClick),
+            SizedBox(
+              width: 20,
+            ),
+            NavigationButton(PAYMENT_TEXT, Icons.payment, _selectedTab == PAYMENT_TEXT, _handlerClick),
           ],
         ),
       ),
@@ -65,12 +68,7 @@ class NavigationButton extends StatelessWidget {
         height: 53,
         decoration: BoxDecoration(
           color: const Color(0xFF22222A),
-          border: this.selected
-              ? Border(
-                  bottom: selected
-                      ? BorderSide(width: 3.0, color: Colors.lightBlue.shade50)
-                      : null)
-              : null,
+          border: this.selected ? Border(bottom: selected ? BorderSide(width: 3.0, color: Colors.lightBlue.shade50) : null) : null,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

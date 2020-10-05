@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salveSeuPorquinho/screens/configurations/crud_header_buttons.dart';
+import 'package:salveSeuPorquinho/screens/configurations/form_payment_methods.dart';
 import 'form_category.dart';
 import 'form_forecast.dart';
 
@@ -19,8 +20,10 @@ class CrudBody extends StatelessWidget {
   Widget _createForm() {
     if (this._selectedTab == CrudHeaderButtons.FORECAST_TEXT) {
       return FormForecast();
-    } else {
+    } else if (this._selectedTab == CrudHeaderButtons.CATEGORIES_TEXT) {
       return FormCategories();
+    } else {
+      return FormPaymentMethods();
     }
   }
 }

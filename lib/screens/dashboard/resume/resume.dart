@@ -42,8 +42,7 @@ class _ResumeScreenState extends State<ResumeScreen> {
               alignment: AlignmentDirectional.bottomCenter,
               children: <Widget>[
                 Header(
-                  (_forecast?.invoice ?? 0) -
-                      (_forecast?.sumCategoriesSpent() ?? 0),
+                  (_forecast?.invoice ?? 0) - (_forecast?.sumCategoriesSpent() ?? 0),
                   date,
                   (DateTime d) {
                     _loadDate(d);
@@ -85,18 +84,13 @@ class _ResumeScreenState extends State<ResumeScreen> {
 
   List<Widget> _buildList() {
     if (selectedTab == 0) {
-      return ObjectArray<CategoryModel>(
-              (_forecast?.categories ?? []), _buildCategory)
-          .getObjects();
+      return ObjectArray<CategoryModel>((_forecast?.categories ?? []), _buildCategory).getObjects();
     } else {
-      return ObjectArray<CategoryModel>(
-              (_forecast?.categories ?? []), _buildGroupByCategory)
-          .getObjects();
+      return ObjectArray<CategoryModel>((_forecast?.categories ?? []), _buildGroupByCategory).getObjects();
     }
   }
 
   Widget _buildCategory(CategoryModel category, int index) {
-    print(category.groupedWrappers);
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Column(
@@ -133,11 +127,9 @@ class _ResumeScreenState extends State<ResumeScreen> {
   }
 
   Widget _buildGroupByCategory(CategoryModel category, int index) {
-    print(category.groupedWrappers);
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
-      child: DashboardItem(category.name, category.sumWrappersBudget(),
-          category.sumWrappersSpent()),
+      child: DashboardItem(category.name, category.sumWrappersBudget(), category.sumWrappersSpent()),
     );
   }
 }

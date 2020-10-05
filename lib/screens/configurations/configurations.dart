@@ -10,6 +10,7 @@ class Configurations extends StatefulWidget {
 class _ConfigurationsState extends State<Configurations> {
   static const _HEADER_FORECAST_TEXT = "Configurar Previsões";
   static const _HEADER_CATEGORIES_TEXT = "Configurar Categorias";
+  static const _HEADER_PAYMENT_METHODS = "Formas de Pagamento";
 
   String _headerText = _HEADER_FORECAST_TEXT;
   String _selectedTab = CrudHeaderButtons.FORECAST_TEXT;
@@ -48,8 +49,10 @@ class _ConfigurationsState extends State<Configurations> {
     setState(() {
       if (tabName == CrudHeaderButtons.FORECAST_TEXT) {
         this._headerText = _HEADER_FORECAST_TEXT;
-      } else {
+      } else if (tabName == CrudHeaderButtons.CATEGORIES_TEXT) {
         this._headerText = _HEADER_CATEGORIES_TEXT;
+      } else {
+        this._headerText = _HEADER_PAYMENT_METHODS;
       }
 
       this._selectedTab = tabName;

@@ -14,20 +14,15 @@ class CategoryModel {
 
   double sumWrappersBudget() {
     if (groupedWrappers.length == 0) return 0;
-    return groupedWrappers
-        .map((wrapper) => wrapper.budget)
-        .reduce((value, element) => value + element);
+    return groupedWrappers.map((wrapper) => wrapper.budget).reduce((value, element) => value + element);
   }
 
   double sumWrappersSpent() {
     if (groupedWrappers.length == 0) return 0;
-    return groupedWrappers
-        .map((wrapper) => wrapper.sumTransactions)
-        .reduce((value, element) => value + element);
+    return groupedWrappers.map((wrapper) => wrapper.sumTransactions).reduce((value, element) => value + element);
   }
 
-  factory CategoryModel.fromMap(Map<String, dynamic> json) =>
-      new CategoryModel.all(
+  factory CategoryModel.fromMap(Map<String, dynamic> json) => new CategoryModel.all(
         json["cat_id"],
         json["cat_name"],
         json["cat_percent"],
